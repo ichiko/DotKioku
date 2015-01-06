@@ -15,6 +15,10 @@
 		EC22E8601A5BECE000EBED00 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EC22E85F1A5BECE000EBED00 /* Images.xcassets */; };
 		EC22E8631A5BECE000EBED00 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = EC22E8611A5BECE000EBED00 /* LaunchScreen.xib */; };
 		EC22E86F1A5BECE000EBED00 /* DotKiokuTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22E86E1A5BECE000EBED00 /* DotKiokuTests.swift */; };
+		EC22E87A1A5BF50800EBED00 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22E8791A5BF50800EBED00 /* Card.swift */; };
+		EC22E87C1A5BF73800EBED00 /* RemembranceArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22E87B1A5BF73800EBED00 /* RemembranceArray.swift */; };
+		EC22E87E1A5BF94C00EBED00 /* GameEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22E87D1A5BF94C00EBED00 /* GameEngine.swift */; };
+		EC22E8801A5BFA4D00EBED00 /* CardPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22E87F1A5BFA4D00EBED00 /* CardPool.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +44,10 @@
 		EC22E8681A5BECE000EBED00 /* DotKiokuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DotKiokuTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC22E86D1A5BECE000EBED00 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EC22E86E1A5BECE000EBED00 /* DotKiokuTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotKiokuTests.swift; sourceTree = "<group>"; };
+		EC22E8791A5BF50800EBED00 /* Card.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
+		EC22E87B1A5BF73800EBED00 /* RemembranceArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemembranceArray.swift; sourceTree = "<group>"; };
+		EC22E87D1A5BF94C00EBED00 /* GameEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameEngine.swift; sourceTree = "<group>"; };
+		EC22E87F1A5BFA4D00EBED00 /* CardPool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardPool.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +96,8 @@
 				EC22E85C1A5BECE000EBED00 /* Main.storyboard */,
 				EC22E85F1A5BECE000EBED00 /* Images.xcassets */,
 				EC22E8611A5BECE000EBED00 /* LaunchScreen.xib */,
+				EC22E8781A5BF3D800EBED00 /* Model */,
+				EC22E87D1A5BF94C00EBED00 /* GameEngine.swift */,
 				EC22E8521A5BECE000EBED00 /* Supporting Files */,
 			);
 			path = DotKioku;
@@ -116,6 +126,16 @@
 				EC22E86D1A5BECE000EBED00 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		EC22E8781A5BF3D800EBED00 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				EC22E8791A5BF50800EBED00 /* Card.swift */,
+				EC22E87B1A5BF73800EBED00 /* RemembranceArray.swift */,
+				EC22E87F1A5BFA4D00EBED00 /* CardPool.swift */,
+			);
+			name = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -220,8 +240,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC22E8591A5BECE000EBED00 /* GameScene.swift in Sources */,
+				EC22E87E1A5BF94C00EBED00 /* GameEngine.swift in Sources */,
+				EC22E87C1A5BF73800EBED00 /* RemembranceArray.swift in Sources */,
+				EC22E8801A5BFA4D00EBED00 /* CardPool.swift in Sources */,
 				EC22E85B1A5BECE000EBED00 /* GameViewController.swift in Sources */,
 				EC22E8551A5BECE000EBED00 /* AppDelegate.swift in Sources */,
+				EC22E87A1A5BF50800EBED00 /* Card.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
