@@ -10,11 +10,11 @@ import Foundation
 
 class Card {
     var typeId: Int
-    
+
     init(typeId: Int) {
         self.typeId = typeId
     }
-    
+
     func match(typeId: Int) -> Bool {
         return (self.typeId == typeId)
     }

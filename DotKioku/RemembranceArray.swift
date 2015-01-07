@@ -11,31 +11,31 @@ import Foundation
 class RemembranceArray {
     var cards: [Card]
     var index: Int
-    
+
     init() {
         self.cards = [Card]()
         self.index = 0
     }
-    
+
     func add(card: Card) -> Int {
         cards.append(card)
         return cards.count
     }
-    
+
     func reset() {
         self.index = 0
     }
-    
+
     func hasNext() -> Bool {
         return (self.index < self.cards.count)
     }
-    
+
     func next() -> Card {
         let card = self.cards[self.index]
         self.index += 1
         return card
     }
-    
+
     var count: Int {
         get {
             return self.cards.count

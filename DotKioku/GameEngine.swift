@@ -13,16 +13,16 @@ let InitialSize = 3
 class GameEngine {
     var cardPool: CardPool?
     var currentGame: RemembranceArray?
-    
+
     func newGame() {
         self.cardPool = CardPool(setId: 0)
         self.currentGame = RemembranceArray()
-        
+
         for var i = 0; i < InitialSize; i++ {
             self.currentGame!.add(self.cardPool!.select())
         }
     }
-    
+
     func nextRound() {
         self.currentGame!.add(self.cardPool!.select())
         self.currentGame!.reset()
