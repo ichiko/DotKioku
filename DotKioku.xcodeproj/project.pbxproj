@@ -19,6 +19,7 @@
 		EC22E87C1A5BF73800EBED00 /* RemembranceArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22E87B1A5BF73800EBED00 /* RemembranceArray.swift */; };
 		EC22E87E1A5BF94C00EBED00 /* GameEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22E87D1A5BF94C00EBED00 /* GameEngine.swift */; };
 		EC22E8801A5BFA4D00EBED00 /* CardPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22E87F1A5BFA4D00EBED00 /* CardPool.swift */; };
+		ECB3358A1A5CB2CA00375F73 /* DKCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB335891A5CB2CA00375F73 /* DKCard.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +49,7 @@
 		EC22E87B1A5BF73800EBED00 /* RemembranceArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemembranceArray.swift; sourceTree = "<group>"; };
 		EC22E87D1A5BF94C00EBED00 /* GameEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameEngine.swift; sourceTree = "<group>"; };
 		EC22E87F1A5BFA4D00EBED00 /* CardPool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardPool.swift; sourceTree = "<group>"; };
+		ECB335891A5CB2CA00375F73 /* DKCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DKCard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +101,7 @@
 				EC22E8781A5BF3D800EBED00 /* Model */,
 				EC22E87D1A5BF94C00EBED00 /* GameEngine.swift */,
 				EC22E8521A5BECE000EBED00 /* Supporting Files */,
+				ECB335891A5CB2CA00375F73 /* DKCard.swift */,
 			);
 			path = DotKioku;
 			sourceTree = "<group>";
@@ -239,6 +242,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECB3358A1A5CB2CA00375F73 /* DKCard.swift in Sources */,
 				EC22E8591A5BECE000EBED00 /* GameScene.swift in Sources */,
 				EC22E87E1A5BF94C00EBED00 /* GameEngine.swift in Sources */,
 				EC22E87C1A5BF73800EBED00 /* RemembranceArray.swift in Sources */,
@@ -439,6 +443,7 @@
 				EC22E8741A5BECE000EBED00 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		EC22E8751A5BECE000EBED00 /* Build configuration list for PBXNativeTarget "DotKiokuTests" */ = {
 			isa = XCConfigurationList;
@@ -447,6 +452,7 @@
 				EC22E8771A5BECE000EBED00 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -24,18 +24,16 @@ class GameScene: SKScene {
         
         for touch: AnyObject in touches {
             let location = touch.locationInNode(self)
+
+            let card = DKCard(cardInfo: Card(typeId: 0))
+            let popLocation = CGPointMake(location.x, 0)
+            card.position = popLocation
             
-            let sprite = SKSpriteNode(imageNamed:"Spaceship")
+            let action = SKAction.moveTo(location, duration: 1)
             
-            sprite.xScale = 0.5
-            sprite.yScale = 0.5
-            sprite.position = location
+            card.runAction(action)
             
-            let action = SKAction.rotateByAngle(CGFloat(M_PI), duration:1)
-            
-            sprite.runAction(SKAction.repeatActionForever(action))
-            
-            self.addChild(sprite)
+            self.addChild(card)
         }
     }
    
