@@ -74,8 +74,6 @@ class GameScene: SKScene, DKCommandDelegate {
 
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
-        view.backgroundColor = SKColor.grayColor()
-
         timerSaved = CACurrentMediaTime()
         engine.newGame()
 
