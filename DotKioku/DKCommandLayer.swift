@@ -18,11 +18,24 @@ protocol DKCommandDelegate {
 
 class DKCommandLayer:SKNode {
     var delegate: DKCommandDelegate?
-    var disabled: Bool
+    var _disabled: Bool = false
+
+    var disabled: Bool {
+        get {
+            return _disabled
+        }
+        set (value) {
+            if _disabled != value {
+                _disabled = value
+                self.enumerateChildNodesWithName("cmdButton", usingBlock: { (node, stop) -> Void in
+                    let btn = node as DKButton
+                    btn.disabled = value
+                })
+            }
+        }
+    }
 
     init(cardPool:CardPool, viewSize:CGSize) {
-        self.disabled = false
-
         super.init()
 
         let buttonSize = CGSizeMake(viewSize.width / 2, ButtonHeight)
@@ -31,37 +44,25 @@ class DKCommandLayer:SKNode {
         let upperY:CGFloat = buttonSize.height * 1.5
         let lowerY:CGFloat = buttonSize.height / 2
 
-        let btnA = DKButton(fontNamed: LabelFontName, fontSize: FontSize, buttonSize: buttonSize)
-        btnA.text = "A"
-        btnA.backgroundColor = SKColor.orangeColor()
-        btnA.position = CGPointMake(leftX, upperY)
-        btnA.buttonDidToucheBlock = { () -> Void in
-            self.commandSelected(cardPool.pool[0])
-        }
-        let btnB = DKButton(fontNamed: LabelFontName, fontSize: FontSize, buttonSize: buttonSize)
-        btnB.text = "B"
-        btnB.position = CGPointMake(rightX, upperY)
-        btnB.buttonDidToucheBlock = { () -> Void in
-            self.commandSelected(cardPool.pool[1])
-        }
-        let btnC = DKButton(fontNamed: LabelFontName, fontSize: FontSize, buttonSize: buttonSize)
-        btnC.text = "C"
-        btnC.position = CGPointMake(leftX, lowerY)
-        btnC.buttonDidToucheBlock = { () -> Void in
-            self.commandSelected(cardPool.pool[2])
-        }
-        let btnD = DKButton(fontNamed: LabelFontName, fontSize: FontSize, buttonSize: buttonSize)
-        btnD.text = "D"
-        btnD.backgroundColor = SKColor.brownColor()
-        btnD.position = CGPointMake(rightX, lowerY)
-        btnD.buttonDidToucheBlock = { () -> Void in
-            self.commandSelected(cardPool.pool[3])
-        }
+        let posX = [leftX, rightX]
+        let posY = [upperY, lowerY]
+        let text = ["A", "B", "C", "D"]
+        let color = [SKColor.orangeColor(), SKColor.grayColor(), SKColor.grayColor(), SKColor.brownColor()]
 
-        self.addChild(btnA)
-        self.addChild(btnB)
-        self.addChild(btnC)
-        self.addChild(btnD)
+        let typeIds = cardPool.pool
+        for var index = 0 ; index < typeIds.count; index++ {
+            let id = typeIds[index]
+            let btn = DKButton(fontNamed: LabelFontName, fontSize: FontSize, buttonSize: buttonSize)
+            btn.text = text[id]
+            btn.name = "cmdButton"
+            btn.backgroundColor = color[id]
+            btn.position = CGPointMake(posX[index % 2], posY[(index - index % 2) / 2])
+            btn.buttonDidToucheBlock = { () -> Void in
+                self.commandSelected(id)
+            }
+
+            self.addChild(btn)
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
