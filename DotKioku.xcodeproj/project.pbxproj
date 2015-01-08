@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		EC22E8551A5BECE000EBED00 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22E8541A5BECE000EBED00 /* AppDelegate.swift */; };
-		EC22E8571A5BECE000EBED00 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = EC22E8561A5BECE000EBED00 /* GameScene.sks */; };
 		EC22E8591A5BECE000EBED00 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22E8581A5BECE000EBED00 /* GameScene.swift */; };
 		EC22E85B1A5BECE000EBED00 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22E85A1A5BECE000EBED00 /* GameViewController.swift */; };
 		EC22E85E1A5BECE000EBED00 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC22E85C1A5BECE000EBED00 /* Main.storyboard */; };
@@ -40,7 +39,6 @@
 		EC22E84F1A5BECE000EBED00 /* DotKioku.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DotKioku.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC22E8531A5BECE000EBED00 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EC22E8541A5BECE000EBED00 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		EC22E8561A5BECE000EBED00 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		EC22E8581A5BECE000EBED00 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		EC22E85A1A5BECE000EBED00 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		EC22E85D1A5BECE000EBED00 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -101,7 +99,6 @@
 			children = (
 				ECB3358B1A5CC55E00375F73 /* assets.atlas */,
 				EC22E8541A5BECE000EBED00 /* AppDelegate.swift */,
-				EC22E8561A5BECE000EBED00 /* GameScene.sks */,
 				EC22E8581A5BECE000EBED00 /* GameScene.swift */,
 				EC22E85A1A5BECE000EBED00 /* GameViewController.swift */,
 				EC22E85C1A5BECE000EBED00 /* Main.storyboard */,
@@ -235,7 +232,6 @@
 			files = (
 				EC22E8631A5BECE000EBED00 /* LaunchScreen.xib in Resources */,
 				EC22E8601A5BECE000EBED00 /* Images.xcassets in Resources */,
-				EC22E8571A5BECE000EBED00 /* GameScene.sks in Resources */,
 				ECB3358C1A5CC55E00375F73 /* assets.atlas in Resources */,
 				EC22E85E1A5BECE000EBED00 /* Main.storyboard in Resources */,
 			);
