@@ -13,7 +13,7 @@ let CardHeight:CGFloat = 150
 
 class DKCard: SKNode {
     var cardInfo: Card
-    var icon: SKSpriteNode?
+    var icon: SKLabelNode?
 
     init(cardInfo:Card) {
         self.cardInfo = cardInfo
@@ -57,9 +57,9 @@ class DKCard: SKNode {
             self.icon = nil
         }
 
-        let icon = SKSpriteNode(imageNamed:"Spaceship")
-        icon.xScale = 0.3
-        icon.yScale = 0.3
+        let icon = SKLabelNode(fontNamed: LabelFontName)
+        icon.text = ["A", "B", "C", "D"][self.cardInfo.typeId]
+        icon.fontColor = SKColor.blackColor()
 
         self.addChild(icon)
         self.icon = icon
