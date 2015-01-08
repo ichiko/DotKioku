@@ -8,8 +8,6 @@
 
 import SpriteKit
 
-let LabelFontName = "Chalkduster"
-
 let StartDurationOver = 0.5
 let PreviewOverPerCard = 1.0
 let PlayerTurnRunningOverPerCard = 1.0
