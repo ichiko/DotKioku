@@ -28,4 +28,13 @@ class CardPool {
         let typeId = self.pool[Int(index)]
         return Card(typeId: typeId)
     }
+
+    func getById(typeId:Int) -> Card? {
+        let cards = self.pool.filter( { $0 == typeId } )
+        if cards.count == 0 {
+            return nil
+        } else {
+            return Card(typeId: cards[0])
+        }
+    }
 }

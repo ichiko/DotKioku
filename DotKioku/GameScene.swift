@@ -14,7 +14,16 @@ let PlayerTurnRunningOverPerCard = 1.0
 let SucceedingWaitForNotice = 1.0
 let SucceedingWaitForNextRound = 2.0
 
+let CardSlideDuration = 0.4
 let PreviewClearnDuration = 0.5
+let PlayerStartNoticeDuration = 1.0
+let PlayerCompleteNoticeShowDelay = 0.3
+let PlayerCompleteNoticeHideDuration = 1.5
+let PlayerGoNextNoticeDuration = 1.0
+let PlayerCleanWaitDuration = 0.8
+let PlayerCleanDuration = 0.5
+let PlayerFailedNoticeShowDelay = 0.8
+let PlayerResultShowDelay = 0.5
 
 let CardLayerBottom:CGFloat = 100
 
@@ -26,8 +35,10 @@ enum GameStatus : String {
     PreviewEnded = "PreviewEnded", // end preview, wait animation end
     PlayerTurnStarted = "PlayerTurnStarted",   // timer start, enable command
     PlayerTurnRunning = "PlayerTurnRunning",
+    PlayerTurnEnded = "PlayerTurnEnded",
     PlayerCompleted = "PlayerCompleted", // wait a moment then goto Preview
     PlayerMissed = "PlayerMissed",  // wait a moment then show result
+    PlayerTimeOver = "PlayerTimeOver", // wait a moment then show result
     GameOver = "GameOver"
 }
 
@@ -37,14 +48,17 @@ class GameScene: SKScene, DKCommandDelegate {
 
     var readyLabel:DKButton?
     var missLabel:SKLabelNode?
+    var timeOverLabel:SKLabelNode?
     var successLabel:SKLabelNode?
+    var startLabel:SKLabelNode?
     var nextLabel:SKLabelNode?
+
     var timerLabel:SKLabelNode?
 
     var _status:GameStatus = .StartDuration
     var timerSaved:CFTimeInterval = 0
-    var previewCount:Int = 0
     var playerTurnOver:CFTimeInterval = 0
+    var endNoticeShown:Bool = false
 
     var engine:GameEngine = GameEngine()
 
@@ -76,10 +90,7 @@ class GameScene: SKScene, DKCommandDelegate {
     }
 
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        if self.status == .WaitForReady {
-            self.status = .Preview
-            self.readyLabel!.hidden = true
-        } else if self.status == .PlayerMissed {
+        if self.status == .PlayerMissed {
             let skView:SKView = self.view!
 
             let scene = GameScene(size: skView.bounds.size)
@@ -104,19 +115,17 @@ class GameScene: SKScene, DKCommandDelegate {
             if timeDiff >= StartDurationOver {
                 self.status = .WaitForReady
                 self.timerSaved = currentTime
-                self.previewCount = 0
+                self.engine.startPreview()
             }
         case .Preview:
             if timeDiff >= PreviewOverPerCard {
                 self.timerSaved = currentTime
-                if self.previewCount < 4 {
-                    self.previewCount++
-                    var offset = self.previewCount * 4
-                    self.addCard(CGFloat(offset))
+                if self.engine.hasNext() {
+                    self.addCard(self.engine.next(), offset: 0)
                 } else {
                     self.status = .PreviewEnded
 
-                    let waitAction = SKAction.waitForDuration(PreviewOverPerCard)
+                    let waitAction = SKAction.waitForDuration(PreviewOverPerCard - PreviewClearnDuration)
                     let cleanAction = SKAction.moveTo(CGPointMake(0, self.view!.frame.height), duration: PreviewClearnDuration)
                     let afterAction = SKAction.runBlock({ () -> Void in
                         self.status = .PlayerTurnStarted
@@ -131,27 +140,47 @@ class GameScene: SKScene, DKCommandDelegate {
             self.timerSaved = currentTime
             self.playerTurnOver = PlayerTurnRunningOverPerCard * Double(engine.currentGame!.count)
             println(self.playerTurnOver)
+
+            self.startLabel!.hidden = false
+            self.setHideAction(self.startLabel!, duration: PlayerStartNoticeDuration)
+
             self.commandLayer!.disabled = false
+            self.resetCardTable()
+            self.engine.startInput()
         case .PlayerTurnRunning:
             // TODO 表示の更新
             if timeDiff >= self.playerTurnOver {
-                self.status = .PlayerMissed
+                self.status = .PlayerTimeOver
                 self.timerSaved = currentTime
             }
+        case .PlayerTurnEnded:
+            self.status = .PlayerCompleted
+            self.timerSaved = currentTime
+            self.setShowAndHideAction(self.successLabel!, showDelay:PlayerCompleteNoticeShowDelay, hideDuration: PlayerCompleteNoticeHideDuration)
+            self.commandLayer!.disabled = true
+            self.endNoticeShown = false
+
+            let waitAction = SKAction.waitForDuration(PlayerCleanWaitDuration)
+            let cleanAction = SKAction.moveTo(self.convertPointFromView(CGPointMake(0, 0)), duration: PlayerCleanDuration)
+
+            let seq = SKAction.sequence([waitAction, cleanAction])
+            self.cardTableLayer!.runAction(seq)
         case .PlayerMissed:
-            // TODO 結果表示
-            self.missLabel!.hidden = false
             self.commandLayer!.disabled = true
+            self.setShowResultAction(self.missLabel!)
+        case .PlayerTimeOver:
+            self.commandLayer!.disabled = true
+            self.setShowResultAction(self.timeOverLabel!)
         case .PlayerCompleted:
-            self.successLabel!.hidden = false
-            self.commandLayer!.disabled = true
             if timeDiff >= SucceedingWaitForNextRound {
                 self.status = .Preview
                 self.timerSaved = currentTime
-            } else if timeDiff >= SucceedingWaitForNotice {
-                if self.nextLabel!.hidden {
-                    self.nextLabel!.hidden = false
-                }
+                self.resetCardTable()
+                self.engine.nextRound()
+            } else if !self.endNoticeShown && timeDiff >= SucceedingWaitForNotice {
+                self.endNoticeShown = true
+                self.nextLabel!.hidden = false
+                self.setHideAction(self.nextLabel!, duration: PlayerGoNextNoticeDuration)
             }
         default:
             let a = "A"
@@ -165,24 +194,43 @@ class GameScene: SKScene, DKCommandDelegate {
         self.cardTableLayer = cardLayer
     }
 
+    func resetCardTable() {
+        self.cardTableLayer!.position = CGPointMake(0, CardLayerBottom)
+        self.cardTableLayer!.removeAllChildren()
+    }
+
     func addLabels() {
         let posCenter = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame))
 
         let lbReady = DKButton(fontNamed:LabelFontName, fontSize:65)
-        lbReady.text = ">> Ready ? <<";
+        lbReady.text = "Ready ?";
         lbReady.backgroundColor = SKColor.whiteColor()
         lbReady.position = posCenter
         lbReady.buttonDidToucheBlock = buttonTouched
 
         let lbMiss = SKLabelNode(fontNamed: LabelFontName)
-        lbMiss.text = "Miss !"
+        lbMiss.text = "Not Collect !"
         lbMiss.position = posCenter
         lbMiss.hidden = true
+        lbMiss.fontColor = SKColor.redColor()
+
+        let lbTimeOver = SKLabelNode(fontNamed: LabelFontName)
+        lbTimeOver.text = "Time Over !"
+        lbTimeOver.position = posCenter
+        lbTimeOver.hidden = true
+        lbTimeOver.fontColor = SKColor.redColor()
 
         let lbSuccess = SKLabelNode(fontNamed: LabelFontName)
         lbSuccess.text = "Success !"
         lbSuccess.position = posCenter
         lbSuccess.hidden = true
+        lbSuccess.fontColor = SKColor.greenColor()
+
+        let lbStart = SKLabelNode(fontNamed: LabelFontName)
+        lbStart.text = "Start !"
+        lbStart.position = posCenter
+        lbStart.hidden = true
+        lbStart.fontColor = SKColor.orangeColor()
 
         let lbNextRound = SKLabelNode(fontNamed: LabelFontName)
         lbNextRound.text = "Go Next Round"
@@ -190,40 +238,94 @@ class GameScene: SKScene, DKCommandDelegate {
         lbNextRound.hidden = true
 
         let lbTimer = SKLabelNode(fontNamed: LabelFontName)
-        lbTimer.text = "00"
-        lbTimer.position = CGPointMake(30, self.view!.frame.height - 30.0)
+        lbTimer.text = "0"
+        lbTimer.position = CGPointMake(0, self.view!.frame.height - 30.0)
+        lbTimer.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
 
         self.addChild(lbReady)
         self.addChild(lbMiss)
+        self.addChild(lbTimeOver)
         self.addChild(lbSuccess)
+        self.addChild(lbStart)
         self.addChild(lbNextRound)
         self.addChild(lbTimer)
 
         self.readyLabel = lbReady
         self.missLabel = lbMiss
+        self.timeOverLabel = lbTimeOver
         self.successLabel = lbSuccess
+        self.startLabel = lbStart
         self.nextLabel = lbNextRound
         self.timerLabel = lbTimer
     }
 
-    func addCard(offset:CGFloat) {
-        let card = DKCard(cardInfo: Card(typeId: 0))
+    func addCard(cardInfo:Card, offset:CGFloat, slideDown:Bool = true) {
+        let card = DKCard(cardInfo: cardInfo)
         let posTo = CGPoint(x:CGRectGetMidX(self.frame) + offset, y:CGRectGetMidY(self.frame));
-        let posFrom = CGPointMake(CGRectGetMidX(self.frame), self.frame.height)
+        let posFrom = CGPointMake(CGRectGetMidX(self.frame), slideDown ? self.frame.height : 0)
         card.position = posFrom
 
-        let action = SKAction.moveTo(posTo, duration: 1)
+        let action = SKAction.moveTo(posTo, duration: CardSlideDuration)
 
         card.runAction(action)
 
         self.cardTableLayer!.addChild(card)
     }
 
+    func setHideAction(node:SKNode!, duration:CFTimeInterval) {
+        let waitAction = SKAction.waitForDuration(duration)
+        let hideAction = SKAction.hide()
+        let seq = SKAction.sequence([waitAction, hideAction])
+        node.runAction(seq)
+    }
+
+    func setShowAndHideAction(node:SKNode!, showDelay:CFTimeInterval, hideDuration:CFTimeInterval) {
+        let delayAction = SKAction.waitForDuration(showDelay)
+        let showAction = SKAction.unhide()
+        let waitAction = SKAction.waitForDuration(hideDuration)
+        let hideAction = SKAction.hide()
+        let seq = SKAction.sequence([delayAction, showAction, waitAction, hideAction])
+        node.runAction(seq)
+    }
+
+    func setShowResultAction(node:SKNode!) {
+        let delayAction = SKAction.waitForDuration(PlayerFailedNoticeShowDelay)
+        let showAction = SKAction.unhide()
+        let waitAction = SKAction.waitForDuration(PlayerResultShowDelay)
+        let resultAction = SKAction.runBlock({ () -> Void in
+            self.showResult()
+        })
+
+        let seq = SKAction.sequence([delayAction, showAction, waitAction, resultAction])
+        node.runAction(seq)
+    }
+
+    func showResult() {
+        // TODO 結果表示
+    }
+
     func buttonTouched() {
         NSLog("Button touched")
+        if self.status == .WaitForReady {
+            self.status = .Preview
+            self.readyLabel!.hidden = true
+        }
     }
 
     func commandSelected(typeId: Int) {
-        NSLog("Command Selected %d", typeId)
+        if self.status == .PlayerTurnRunning {
+            NSLog("Command Selected %d", typeId)
+            self.addCard(self.engine.getCardByTypeId(typeId)!, offset: 0, slideDown: false)
+            if self.engine.checkInput(typeId) {
+                self.engine.next()
+                if !self.engine.hasNext() {
+                    self.status = .PlayerTurnEnded
+                    self.commandLayer!.disabled = true
+                }
+            } else {
+                self.status = .PlayerMissed
+                self.commandLayer!.disabled = true
+            }
+        }
     }
 }

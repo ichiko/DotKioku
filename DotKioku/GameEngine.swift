@@ -26,6 +26,31 @@ class GameEngine {
         }
     }
 
+    func startPreview() {
+        self.currentGame!.reset()
+    }
+
+    func startInput() {
+        self.currentGame!.reset()
+    }
+
+    func hasNext() -> Bool {
+        return self.currentGame!.hasNext()
+    }
+
+    func next() -> Card {
+        return self.currentGame!.next()
+    }
+
+    func checkInput(typeId:Int) -> Bool {
+        let card = self.currentGame!.getCurrent()
+        return card.match(typeId)
+    }
+
+    func getCardByTypeId(typeId:Int) -> Card? {
+        return self.cardPool!.getById(typeId)
+    }
+
     func nextRound() {
         self.currentGame!.add(self.cardPool!.select())
         self.currentGame!.reset()

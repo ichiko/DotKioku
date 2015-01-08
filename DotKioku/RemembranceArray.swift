@@ -30,6 +30,10 @@ class RemembranceArray {
         return (self.index < self.cards.count)
     }
 
+    func getCurrent() -> Card {
+        return self.cards[self.index]
+    }
+
     func next() -> Card {
         let card = self.cards[self.index]
         self.index += 1
