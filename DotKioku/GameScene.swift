@@ -54,11 +54,13 @@ class GameScene: SKScene, DKCommandDelegate {
     var nextLabel:SKLabelNode?
 
     var timerLabel:SKLabelNode?
+    var cardNumLabel:SKLabelNode?
 
     var _status:GameStatus = .StartDuration
     var timerSaved:CFTimeInterval = 0
     var playerTurnOver:CFTimeInterval = 0
     var endNoticeShown:Bool = false
+    var cardCount:Int = 0
 
     var engine:GameEngine = GameEngine()
 
@@ -88,7 +90,7 @@ class GameScene: SKScene, DKCommandDelegate {
     }
 
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        if self.status == .PlayerMissed {
+        if self.status == .PlayerMissed || self.status == .PlayerTimeOver {
             let skView:SKView = self.view!
 
             let scene = GameScene(size: skView.bounds.size)
@@ -106,19 +108,27 @@ class GameScene: SKScene, DKCommandDelegate {
 
         let timeDiff = currentTime - timerSaved
 
-        self.timerLabel?.text = NSString(format: "% 2.2f", Float(timeDiff))
+        if self.status == .PlayerTurnStarted || self.status == .PlayerTurnRunning {
+            if !self.timerLabel!.hidden {
+                let rest = max(0, self.playerTurnOver - timeDiff)
+                self.timerLabel!.text = NSString(format: "% 2.2f", Float(rest))
+            }
+        }
+        self.cardNumLabel!.text = NSString(format: "%2d / %2d", self.cardCount, self.engine.cardCount())
 
         switch self.status {
         case .StartDuration:
             if timeDiff >= StartDurationOver {
                 self.status = .WaitForReady
                 self.timerSaved = currentTime
+                self.cardCount = 0
                 self.engine.startPreview()
             }
         case .Preview:
             if timeDiff >= PreviewOverPerCard {
                 self.timerSaved = currentTime
                 if self.engine.hasNext() {
+                    self.cardCount++
                     self.addCard(self.engine.next(), offset: 0)
                 } else {
                     self.status = .PreviewEnded
@@ -136,11 +146,14 @@ class GameScene: SKScene, DKCommandDelegate {
         case .PlayerTurnStarted:
             self.status = .PlayerTurnRunning
             self.timerSaved = currentTime
+            self.cardCount = 0
+
             self.playerTurnOver = PlayerTurnRunningOverPerCard * Double(engine.currentGame!.count)
             println(self.playerTurnOver)
 
             self.startLabel!.hidden = false
             self.setHideAction(self.startLabel!, duration: PlayerStartNoticeDuration)
+            self.timerLabel!.hidden = false
 
             self.commandLayer!.disabled = false
             self.resetCardTable()
@@ -172,7 +185,9 @@ class GameScene: SKScene, DKCommandDelegate {
         case .PlayerCompleted:
             if timeDiff >= SucceedingWaitForNextRound {
                 self.status = .Preview
+                self.timerLabel!.hidden = true
                 self.timerSaved = currentTime
+                self.cardCount = 0
                 self.resetCardTable()
                 self.engine.nextRound()
             } else if !self.endNoticeShown && timeDiff >= SucceedingWaitForNotice {
@@ -239,6 +254,12 @@ class GameScene: SKScene, DKCommandDelegate {
         lbTimer.text = "0"
         lbTimer.position = CGPointMake(0, self.view!.frame.height - 30.0)
         lbTimer.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+        lbTimer.hidden = true
+
+        let lbCardNum = SKLabelNode(fontNamed: LabelFontName)
+        lbCardNum.text = "00/00"
+        lbCardNum.position = CGPointMake(self.view!.frame.width, self.view!.frame.height - 30.0)
+        lbCardNum.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Right
 
         self.addChild(lbReady)
         self.addChild(lbMiss)
@@ -247,6 +268,7 @@ class GameScene: SKScene, DKCommandDelegate {
         self.addChild(lbStart)
         self.addChild(lbNextRound)
         self.addChild(lbTimer)
+        self.addChild(lbCardNum)
 
         self.readyLabel = lbReady
         self.missLabel = lbMiss
@@ -255,6 +277,7 @@ class GameScene: SKScene, DKCommandDelegate {
         self.startLabel = lbStart
         self.nextLabel = lbNextRound
         self.timerLabel = lbTimer
+        self.cardNumLabel = lbCardNum
     }
 
     func addCard(cardInfo:Card, offset:CGFloat, slideDown:Bool = true) {
@@ -313,6 +336,7 @@ class GameScene: SKScene, DKCommandDelegate {
     func commandSelected(typeId: Int) {
         if self.status == .PlayerTurnRunning {
             NSLog("Command Selected %d", typeId)
+            self.cardCount++
             self.addCard(self.engine.getCardByTypeId(typeId)!, offset: 0, slideDown: false)
             if self.engine.checkInput(typeId) {
                 self.engine.next()

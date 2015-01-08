@@ -55,4 +55,8 @@ class GameEngine {
         self.currentGame!.add(self.cardPool!.select())
         self.currentGame!.reset()
     }
+
+    func cardCount() -> Int {
+        return self.currentGame!.count
+    }
 }
