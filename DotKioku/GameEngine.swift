@@ -14,6 +14,9 @@ class GameEngine {
     var cardPool: CardPool?
     var currentGame: RemembranceArray?
 
+    init() {
+    }
+
     func newGame() {
         self.cardPool = CardPool(setId: 0)
         self.currentGame = RemembranceArray()

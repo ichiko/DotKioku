@@ -20,6 +20,9 @@
 		EC22E87E1A5BF94C00EBED00 /* GameEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22E87D1A5BF94C00EBED00 /* GameEngine.swift */; };
 		EC22E8801A5BFA4D00EBED00 /* CardPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22E87F1A5BFA4D00EBED00 /* CardPool.swift */; };
 		ECB3358A1A5CB2CA00375F73 /* DKCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB335891A5CB2CA00375F73 /* DKCard.swift */; };
+		ECB3358C1A5CC55E00375F73 /* assets.atlas in Resources */ = {isa = PBXBuildFile; fileRef = ECB3358B1A5CC55E00375F73 /* assets.atlas */; };
+		ECB3358E1A5CC79500375F73 /* DKButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB3358D1A5CC79500375F73 /* DKButton.swift */; };
+		ECB335901A5D206000375F73 /* DKCommandLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB3358F1A5D205F00375F73 /* DKCommandLayer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +53,9 @@
 		EC22E87D1A5BF94C00EBED00 /* GameEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameEngine.swift; sourceTree = "<group>"; };
 		EC22E87F1A5BFA4D00EBED00 /* CardPool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardPool.swift; sourceTree = "<group>"; };
 		ECB335891A5CB2CA00375F73 /* DKCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DKCard.swift; sourceTree = "<group>"; };
+		ECB3358B1A5CC55E00375F73 /* assets.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = assets.atlas; sourceTree = "<group>"; };
+		ECB3358D1A5CC79500375F73 /* DKButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DKButton.swift; sourceTree = "<group>"; };
+		ECB3358F1A5D205F00375F73 /* DKCommandLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DKCommandLayer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +97,7 @@
 		EC22E8511A5BECE000EBED00 /* DotKioku */ = {
 			isa = PBXGroup;
 			children = (
+				ECB3358B1A5CC55E00375F73 /* assets.atlas */,
 				EC22E8541A5BECE000EBED00 /* AppDelegate.swift */,
 				EC22E8561A5BECE000EBED00 /* GameScene.sks */,
 				EC22E8581A5BECE000EBED00 /* GameScene.swift */,
@@ -102,6 +109,8 @@
 				EC22E87D1A5BF94C00EBED00 /* GameEngine.swift */,
 				EC22E8521A5BECE000EBED00 /* Supporting Files */,
 				ECB335891A5CB2CA00375F73 /* DKCard.swift */,
+				ECB3358D1A5CC79500375F73 /* DKButton.swift */,
+				ECB3358F1A5D205F00375F73 /* DKCommandLayer.swift */,
 			);
 			path = DotKioku;
 			sourceTree = "<group>";
@@ -224,6 +233,7 @@
 				EC22E8631A5BECE000EBED00 /* LaunchScreen.xib in Resources */,
 				EC22E8601A5BECE000EBED00 /* Images.xcassets in Resources */,
 				EC22E8571A5BECE000EBED00 /* GameScene.sks in Resources */,
+				ECB3358C1A5CC55E00375F73 /* assets.atlas in Resources */,
 				EC22E85E1A5BECE000EBED00 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -242,12 +252,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECB335901A5D206000375F73 /* DKCommandLayer.swift in Sources */,
 				ECB3358A1A5CB2CA00375F73 /* DKCard.swift in Sources */,
 				EC22E8591A5BECE000EBED00 /* GameScene.swift in Sources */,
 				EC22E87E1A5BF94C00EBED00 /* GameEngine.swift in Sources */,
 				EC22E87C1A5BF73800EBED00 /* RemembranceArray.swift in Sources */,
 				EC22E8801A5BFA4D00EBED00 /* CardPool.swift in Sources */,
 				EC22E85B1A5BECE000EBED00 /* GameViewController.swift in Sources */,
+				ECB3358E1A5CC79500375F73 /* DKButton.swift in Sources */,
 				EC22E8551A5BECE000EBED00 /* AppDelegate.swift in Sources */,
 				EC22E87A1A5BF50800EBED00 /* Card.swift in Sources */,
 			);
