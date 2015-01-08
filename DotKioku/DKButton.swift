@@ -14,7 +14,7 @@ let PanelHeight:CGFloat = 80
 class DKButton: SKNode {
     var label: SKLabelNode
     var panel: SKSpriteNode?
-    var disabled: Bool
+    var _disabled: Bool
     var highlighted: Bool
     var buttonDidToucheBlock: dispatch_block_t?
 
@@ -22,7 +22,7 @@ class DKButton: SKNode {
         self.label = SKLabelNode(fontNamed: fontNamed)
         self.label.fontSize = fontSize
         self.highlighted = false
-        self.disabled = false
+        self._disabled = false
 
         super.init()
 
@@ -64,6 +64,16 @@ class DKButton: SKNode {
             if let panel = self.panel {
                 panel.color = value!
             }
+        }
+    }
+
+    var disabled:Bool {
+        get {
+            return _disabled
+        }
+        set (value) {
+            _disabled = value
+            setHighLighted(_disabled)
         }
     }
 
