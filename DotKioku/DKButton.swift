@@ -99,7 +99,8 @@ class DKButton: SKNode {
 
     func setHighLighted(highlighted:Bool) {
         self.highlighted = highlighted
-        self.label?.colorBlendFactor = (self.highlighted ? 0.7 : 0)
+        self.label?.colorBlendFactor = (highlighted ? 0.7 : 0)
+        self.icon?.colorBlendFactor = (highlighted ? 0.7 : 0)
         // 色とサイズのみのSpriteではブレンドが効かない
 //        self.panel.colorBlendFactor = (self.highlighted ? 0.7 : 0)
     }
