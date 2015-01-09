@@ -18,6 +18,10 @@
 		EC22E87C1A5BF73800EBED00 /* RemembranceArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22E87B1A5BF73800EBED00 /* RemembranceArray.swift */; };
 		EC22E87E1A5BF94C00EBED00 /* GameEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22E87D1A5BF94C00EBED00 /* GameEngine.swift */; };
 		EC22E8801A5BFA4D00EBED00 /* CardPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22E87F1A5BFA4D00EBED00 /* CardPool.swift */; };
+		EC539AC71A5FBD33002A5E96 /* AudioUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC539AC61A5FBD33002A5E96 /* AudioUtils.swift */; };
+		EC539ACC1A5FBFBB002A5E96 /* SE001_Fail.wav in Resources */ = {isa = PBXBuildFile; fileRef = EC539AC91A5FBFBB002A5E96 /* SE001_Fail.wav */; };
+		EC539ACD1A5FBFBB002A5E96 /* SE001_Rankup.wav in Resources */ = {isa = PBXBuildFile; fileRef = EC539ACA1A5FBFBB002A5E96 /* SE001_Rankup.wav */; };
+		EC539ACE1A5FBFBB002A5E96 /* SE002_paper.wav in Resources */ = {isa = PBXBuildFile; fileRef = EC539ACB1A5FBFBB002A5E96 /* SE002_paper.wav */; };
 		ECB19B461A5F7405007470A2 /* DKUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB19B451A5F7405007470A2 /* DKUtils.swift */; };
 		ECB3358A1A5CB2CA00375F73 /* DKCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB335891A5CB2CA00375F73 /* DKCard.swift */; };
 		ECB3358C1A5CC55E00375F73 /* assets.atlas in Resources */ = {isa = PBXBuildFile; fileRef = ECB3358B1A5CC55E00375F73 /* assets.atlas */; };
@@ -53,6 +57,10 @@
 		EC22E87B1A5BF73800EBED00 /* RemembranceArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemembranceArray.swift; sourceTree = "<group>"; };
 		EC22E87D1A5BF94C00EBED00 /* GameEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameEngine.swift; sourceTree = "<group>"; };
 		EC22E87F1A5BFA4D00EBED00 /* CardPool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardPool.swift; sourceTree = "<group>"; };
+		EC539AC61A5FBD33002A5E96 /* AudioUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioUtils.swift; sourceTree = "<group>"; };
+		EC539AC91A5FBFBB002A5E96 /* SE001_Fail.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = SE001_Fail.wav; sourceTree = "<group>"; };
+		EC539ACA1A5FBFBB002A5E96 /* SE001_Rankup.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = SE001_Rankup.wav; sourceTree = "<group>"; };
+		EC539ACB1A5FBFBB002A5E96 /* SE002_paper.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = SE002_paper.wav; sourceTree = "<group>"; };
 		ECB19B451A5F7405007470A2 /* DKUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DKUtils.swift; sourceTree = "<group>"; };
 		ECB335891A5CB2CA00375F73 /* DKCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DKCard.swift; sourceTree = "<group>"; };
 		ECB3358B1A5CC55E00375F73 /* assets.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = assets.atlas; sourceTree = "<group>"; };
@@ -101,6 +109,7 @@
 		EC22E8511A5BECE000EBED00 /* DotKioku */ = {
 			isa = PBXGroup;
 			children = (
+				EC539AC81A5FBFBB002A5E96 /* sounds */,
 				ECB3358B1A5CC55E00375F73 /* assets.atlas */,
 				EC22E8541A5BECE000EBED00 /* AppDelegate.swift */,
 				EC22E8581A5BECE000EBED00 /* GameScene.swift */,
@@ -116,6 +125,7 @@
 				ECB3358F1A5D205F00375F73 /* DKCommandLayer.swift */,
 				ECB531141A5E39DF002FA5C6 /* Constants.swift */,
 				ECB531161A5E6FD0002FA5C6 /* DKResultLayer.swift */,
+				EC539AC61A5FBD33002A5E96 /* AudioUtils.swift */,
 				ECB19B451A5F7405007470A2 /* DKUtils.swift */,
 			);
 			path = DotKioku;
@@ -154,6 +164,16 @@
 				EC22E87F1A5BFA4D00EBED00 /* CardPool.swift */,
 			);
 			name = Model;
+			sourceTree = "<group>";
+		};
+		EC539AC81A5FBFBB002A5E96 /* sounds */ = {
+			isa = PBXGroup;
+			children = (
+				EC539AC91A5FBFBB002A5E96 /* SE001_Fail.wav */,
+				EC539ACA1A5FBFBB002A5E96 /* SE001_Rankup.wav */,
+				EC539ACB1A5FBFBB002A5E96 /* SE002_paper.wav */,
+			);
+			path = sounds;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -238,8 +258,11 @@
 			files = (
 				EC22E8631A5BECE000EBED00 /* LaunchScreen.xib in Resources */,
 				EC22E8601A5BECE000EBED00 /* Images.xcassets in Resources */,
+				EC539ACE1A5FBFBB002A5E96 /* SE002_paper.wav in Resources */,
 				ECB3358C1A5CC55E00375F73 /* assets.atlas in Resources */,
+				EC539ACD1A5FBFBB002A5E96 /* SE001_Rankup.wav in Resources */,
 				EC22E85E1A5BECE000EBED00 /* Main.storyboard in Resources */,
+				EC539ACC1A5FBFBB002A5E96 /* SE001_Fail.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,6 +292,7 @@
 				EC22E85B1A5BECE000EBED00 /* GameViewController.swift in Sources */,
 				ECB3358E1A5CC79500375F73 /* DKButton.swift in Sources */,
 				EC22E8551A5BECE000EBED00 /* AppDelegate.swift in Sources */,
+				EC539AC71A5FBD33002A5E96 /* AudioUtils.swift in Sources */,
 				EC22E87A1A5BF50800EBED00 /* Card.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -9,3 +9,14 @@
 import Foundation
 
 let LabelFontName = "Chalkduster"
+
+struct Constants {
+    static let LabelFontSize:Int = 4
+
+    struct Sound {
+        static let SEFail = "SE001_Fail"
+        static let SERankUp = "SE001_Rankup"
+        static let SECard = "SE002_paper"
+        static let Type = "wav"
+    }
+}

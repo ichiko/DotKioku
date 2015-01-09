@@ -183,10 +183,12 @@ class GameScene: SKScene, DKCommandDelegate {
             self.commandLayer!.disabled = true
             self.setShowResultAction(self.missLabel!)
             self.status = .GameOver
+            AudioUtils.shared.playEffect(Constants.Sound.SEFail, type: Constants.Sound.Type)
         case .PlayerTimeOver:
             self.commandLayer!.disabled = true
             self.setShowResultAction(self.timeOverLabel!)
             self.status = .GameOver
+            AudioUtils.shared.playEffect(Constants.Sound.SEFail, type: Constants.Sound.Type)
         case .PlayerCompleted:
             if timeDiff >= SucceedingWaitForNextRound {
                 self.status = .Preview
@@ -195,6 +197,7 @@ class GameScene: SKScene, DKCommandDelegate {
                 self.cardCount = 0
                 self.resetCardTable()
                 self.engine.nextRound()
+                AudioUtils.shared.playEffect(Constants.Sound.SERankUp, type: Constants.Sound.Type)
             } else if !self.endNoticeShown && timeDiff >= SucceedingWaitForNotice {
                 self.endNoticeShown = true
                 self.nextLabel!.hidden = false
@@ -327,6 +330,7 @@ class GameScene: SKScene, DKCommandDelegate {
         card.runAction(action)
 
         self.cardTableLayer!.addChild(card)
+        AudioUtils.shared.playEffect(Constants.Sound.SECard, type: Constants.Sound.Type)
     }
 
     func setHideAction(node:SKNode!, duration:CFTimeInterval) {
@@ -346,6 +350,8 @@ class GameScene: SKScene, DKCommandDelegate {
     }
 
     func setShowResultAction(node:SKNode!) {
+        node.hidden = true
+
         let delayAction = SKAction.waitForDuration(PlayerFailedNoticeShowDelay)
         let showAction = SKAction.unhide()
         let waitAction = SKAction.waitForDuration(PlayerResultShowDelay)
@@ -364,8 +370,8 @@ class GameScene: SKScene, DKCommandDelegate {
     }
 
     func buttonTouched() {
-        NSLog("Button touched")
         if self.status == .WaitForReady {
+            AudioUtils.shared.playEffect(Constants.Sound.SERankUp, type: Constants.Sound.Type)
             self.status = .Preview
             self.readyLabel!.hidden = true
         }
@@ -373,7 +379,6 @@ class GameScene: SKScene, DKCommandDelegate {
 
     func commandSelected(typeId: Int) {
         if self.status == .PlayerTurnRunning {
-            NSLog("Command Selected %d", typeId)
             self.cardCount++
             self.addCard(self.engine.getCardByTypeId(typeId)!, offset: 0, slideDown: false)
             if self.engine.checkInput(typeId) {
