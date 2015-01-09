@@ -31,7 +31,7 @@ class DKResultLayer:SKNode {
 
     func addScore(score:Int) {
         let lbScore = SKLabelNode(fontNamed: LabelFontName)
-        lbScore.text = NSString(format: "%d", score)
+        lbScore.text = NSString(format: "score %d", score)
         self.addChild(lbScore)
     }
 }

@@ -40,7 +40,7 @@ class GameEngine {
     }
 
     func newGame() {
-        self.cardPool = CardPool(setId: 0, name: "Hoge")
+        self.cardPool = CardPool(setId: 0, name: "Sage Name")
         self.currentGame = RemembranceArray()
 
         for var i = 0; i < InitialSize; i++ {
