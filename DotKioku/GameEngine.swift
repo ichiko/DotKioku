@@ -11,14 +11,36 @@ import Foundation
 let InitialSize = 3
 
 class GameEngine {
-    var cardPool: CardPool?
-    var currentGame: RemembranceArray?
+    private var cardPool: CardPool?
+    private var currentGame: RemembranceArray?
 
     init() {
     }
 
+    var info:CardPool {
+        get {
+            return self.cardPool!
+        }
+    }
+
+    var score:Int {
+        get {
+            if self.hasNext() {
+                return self.cardCount - 1
+            } else {
+                return self.cardCount
+            }
+        }
+    }
+
+    var cardCount:Int {
+        get {
+            return self.currentGame!.count
+        }
+    }
+
     func newGame() {
-        self.cardPool = CardPool(setId: 0)
+        self.cardPool = CardPool(setId: 0, name: "Hoge")
         self.currentGame = RemembranceArray()
 
         for var i = 0; i < InitialSize; i++ {
@@ -54,9 +76,5 @@ class GameEngine {
     func nextRound() {
         self.currentGame!.add(self.cardPool!.select())
         self.currentGame!.reset()
-    }
-
-    func cardCount() -> Int {
-        return self.currentGame!.count
     }
 }

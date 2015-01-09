@@ -10,9 +10,11 @@ import Foundation
 
 class CardPool {
     var pool: [Int]
+    var name: String
 
-    init(setId:Int) {
+    init(setId:Int, name:String) {
         self.pool = [Int]()
+        self.name = name
         self.initWithSet(setId)
     }
 

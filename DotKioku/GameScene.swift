@@ -26,6 +26,10 @@ let PlayerFailedNoticeShowDelay = 0.8
 let PlayerResultShowDelay = 0.5
 
 let CardLayerBottom:CGFloat = 100
+let ResultLayerBottomFromCenter:CGFloat = 40
+
+let TimeBarHeight:CGFloat = 20
+let TimeBarBottom:CGFloat = 136
 
 enum GameStatus : String {
     case
@@ -54,6 +58,7 @@ class GameScene: SKScene, DKCommandDelegate {
     var nextLabel:SKLabelNode?
 
     var timerLabel:SKLabelNode?
+    var timeBar:SKSpriteNode?
     var cardNumLabel:SKLabelNode?
 
     var _status:GameStatus = .StartDuration
@@ -81,8 +86,9 @@ class GameScene: SKScene, DKCommandDelegate {
 
         self.addCardTable()
         self.addLabels()
+        self.addBar()
 
-        let command = DKCommandLayer(cardPool: engine.cardPool!, viewSize: CGSizeMake(self.frame.width, self.frame.height))
+        let command = DKCommandLayer(cardPool: engine.info, viewSize: CGSizeMake(self.frame.width, self.frame.height))
         command.disabled = true
         command.delegate = self
         self.addChild(command)
@@ -90,7 +96,7 @@ class GameScene: SKScene, DKCommandDelegate {
     }
 
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        if self.status == .PlayerMissed || self.status == .PlayerTimeOver {
+        if self.status == .GameOver {
             let skView:SKView = self.view!
 
             let scene = GameScene(size: skView.bounds.size)
@@ -108,13 +114,8 @@ class GameScene: SKScene, DKCommandDelegate {
 
         let timeDiff = currentTime - timerSaved
 
-        if self.status == .PlayerTurnStarted || self.status == .PlayerTurnRunning {
-            if !self.timerLabel!.hidden {
-                let rest = max(0, self.playerTurnOver - timeDiff)
-                self.timerLabel!.text = NSString(format: "% 2.2f", Float(rest))
-            }
-        }
-        self.cardNumLabel!.text = NSString(format: "%2d / %2d", self.cardCount, self.engine.cardCount())
+        self.updateTimer(timeDiff)
+        self.cardNumLabel!.text = NSString(format: "%2d / %2d", self.cardCount, self.engine.cardCount)
 
         switch self.status {
         case .StartDuration:
@@ -148,7 +149,7 @@ class GameScene: SKScene, DKCommandDelegate {
             self.timerSaved = currentTime
             self.cardCount = 0
 
-            self.playerTurnOver = PlayerTurnRunningOverPerCard * Double(engine.currentGame!.count)
+            self.playerTurnOver = PlayerTurnRunningOverPerCard * Double(engine.cardCount)
             println(self.playerTurnOver)
 
             self.startLabel!.hidden = false
@@ -172,16 +173,18 @@ class GameScene: SKScene, DKCommandDelegate {
             self.endNoticeShown = false
 
             let waitAction = SKAction.waitForDuration(PlayerCleanWaitDuration)
-            let cleanAction = SKAction.moveTo(self.convertPointFromView(CGPointMake(0, 0)), duration: PlayerCleanDuration)
+            let cleanAction = SKAction.moveTo(CGPointMake(0, 0), duration: PlayerCleanDuration)
 
             let seq = SKAction.sequence([waitAction, cleanAction])
             self.cardTableLayer!.runAction(seq)
         case .PlayerMissed:
             self.commandLayer!.disabled = true
             self.setShowResultAction(self.missLabel!)
+            self.status = .GameOver
         case .PlayerTimeOver:
             self.commandLayer!.disabled = true
             self.setShowResultAction(self.timeOverLabel!)
+            self.status = .GameOver
         case .PlayerCompleted:
             if timeDiff >= SucceedingWaitForNextRound {
                 self.status = .Preview
@@ -213,7 +216,7 @@ class GameScene: SKScene, DKCommandDelegate {
     }
 
     func addLabels() {
-        let posCenter = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame))
+        let posCenter = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame) + 60)
 
         let lbReady = DKButton(fontNamed:LabelFontName, fontSize:65)
         lbReady.text = "Ready ?";
@@ -280,6 +283,37 @@ class GameScene: SKScene, DKCommandDelegate {
         self.cardNumLabel = lbCardNum
     }
 
+    func addBar() {
+        let bar = SKSpriteNode(color: SKColor.greenColor(), size: CGSizeMake(self.view!.frame.width, TimeBarHeight))
+        bar.position = CGPointMake(0, TimeBarBottom)
+        bar.anchorPoint = CGPointMake(0, 0)
+
+        self.addChild(bar)
+        self.timeBar = bar
+    }
+
+    func updateTimer(timeDiff:CFTimeInterval) {
+        if self.status == .PlayerTurnStarted || self.status == .PlayerTurnRunning {
+            if !self.timerLabel!.hidden {
+                let rest = max(0, self.playerTurnOver - timeDiff)
+                self.timerLabel!.text = NSString(format: "% 2.2f", Float(rest))
+
+                let progress = rest / self.playerTurnOver
+                self.timeBar?.xScale = CGFloat(progress)
+                if progress >= 0.5 {
+                    self.timeBar?.color = SKColor.greenColor()
+                } else if progress >= 0.25 {
+                    self.timeBar?.color = SKColor.yellowColor()
+                } else {
+                    self.timeBar?.color = SKColor.redColor()
+                }
+            }
+        } else if self.status == .Preview || self.status == .PreviewEnded {
+            self.timeBar?.xScale = 1.0
+            self.timeBar?.color = SKColor.greenColor()
+        }
+    }
+
     func addCard(cardInfo:Card, offset:CGFloat, slideDown:Bool = true) {
         let card = DKCard(cardInfo: cardInfo)
         let posTo = CGPoint(x:CGRectGetMidX(self.frame) + offset, y:CGRectGetMidY(self.frame));
@@ -322,7 +356,9 @@ class GameScene: SKScene, DKCommandDelegate {
     }
 
     func showResult() {
-        // TODO 結果表示
+        let result = DKResultLayer(setInfo: self.engine.info, score: self.engine.score)
+        result.position = CGPointMake(CGRectGetMidX(self.view!.frame), CGRectGetMidY(self.view!.frame) - ResultLayerBottomFromCenter)
+        self.addChild(result)
     }
 
     func buttonTouched() {
