@@ -26,10 +26,11 @@ let PlayerFailedNoticeShowDelay = 0.8
 let PlayerResultShowDelay = 0.5
 
 let CardLayerBottom:CGFloat = 100
+let CommandLayerBottom:CGFloat = 50
 let ResultLayerBottomFromCenter:CGFloat = 40
 
 let TimeBarHeight:CGFloat = 20
-let TimeBarBottom:CGFloat = 136
+let TimeBarBottom:CGFloat = 170
 
 enum GameStatus : String {
     case
@@ -89,6 +90,7 @@ class GameScene: SKScene, DKCommandDelegate {
         self.addBar()
 
         let command = DKCommandLayer(cardPool: engine.info, viewSize: CGSizeMake(self.frame.width, self.frame.height))
+        command.position = CGPointMake(0, CommandLayerBottom)
         command.disabled = true
         command.delegate = self
         self.addChild(command)
@@ -160,7 +162,6 @@ class GameScene: SKScene, DKCommandDelegate {
             self.resetCardTable()
             self.engine.startInput()
         case .PlayerTurnRunning:
-            // TODO 表示の更新
             if timeDiff >= self.playerTurnOver {
                 self.status = .PlayerTimeOver
                 self.timerSaved = currentTime
@@ -173,7 +174,8 @@ class GameScene: SKScene, DKCommandDelegate {
             self.endNoticeShown = false
 
             let waitAction = SKAction.waitForDuration(PlayerCleanWaitDuration)
-            let cleanAction = SKAction.moveTo(CGPointMake(0, 0), duration: PlayerCleanDuration)
+            let cleanAction = SKAction.moveTo(CGPointMake(0, -CGRectGetMidY(self.frame) - CardLayerBottom),
+                duration: PlayerCleanDuration)
 
             let seq = SKAction.sequence([waitAction, cleanAction])
             self.cardTableLayer!.runAction(seq)
@@ -255,13 +257,13 @@ class GameScene: SKScene, DKCommandDelegate {
 
         let lbTimer = SKLabelNode(fontNamed: LabelFontName)
         lbTimer.text = "0"
-        lbTimer.position = CGPointMake(0, self.view!.frame.height - 30.0)
+        lbTimer.position = CGPointMake(0, self.frame.height - 30.0)
         lbTimer.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
         lbTimer.hidden = true
 
         let lbCardNum = SKLabelNode(fontNamed: LabelFontName)
         lbCardNum.text = "00/00"
-        lbCardNum.position = CGPointMake(self.view!.frame.width, self.view!.frame.height - 30.0)
+        lbCardNum.position = CGPointMake(self.frame.width, self.frame.height - 30.0)
         lbCardNum.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Right
 
         self.addChild(lbReady)
@@ -284,7 +286,7 @@ class GameScene: SKScene, DKCommandDelegate {
     }
 
     func addBar() {
-        let bar = SKSpriteNode(color: SKColor.greenColor(), size: CGSizeMake(self.view!.frame.width, TimeBarHeight))
+        let bar = SKSpriteNode(color: SKColor.greenColor(), size: CGSizeMake(self.frame.width, TimeBarHeight))
         bar.position = CGPointMake(0, TimeBarBottom)
         bar.anchorPoint = CGPointMake(0, 0)
 
