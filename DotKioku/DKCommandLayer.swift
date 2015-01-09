@@ -46,19 +46,17 @@ class DKCommandLayer:SKNode {
 
         let posX = [leftX, rightX]
         let posY = [upperY, lowerY]
-        let text = ["A", "B", "C", "D"]
         let color = [SKColor.orangeColor(), SKColor.grayColor(), SKColor.grayColor(), SKColor.brownColor()]
 
         let typeIds = cardPool.pool
         for var index = 0 ; index < typeIds.count; index++ {
-            let id = typeIds[index]
-            let btn = DKButton(fontNamed: LabelFontName, fontSize: FontSize, buttonSize: buttonSize)
-            btn.text = text[id]
+            let typeId = typeIds[index]
+            let btn = DKButton(iconTexture: DKUtils.shared.texture(fromTypeId: typeId), buttonSize: buttonSize)
             btn.name = "cmdButton"
-            btn.backgroundColor = color[id]
+            btn.backgroundColor = color[typeId]
             btn.position = CGPointMake(posX[index % 2], posY[(index - index % 2) / 2])
             btn.buttonDidToucheBlock = { () -> Void in
-                self.commandSelected(id)
+                self.commandSelected(typeId)
             }
 
             self.addChild(btn)

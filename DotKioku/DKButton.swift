@@ -12,33 +12,44 @@ let PanelWidth:CGFloat = 150
 let PanelHeight:CGFloat = 80
 
 class DKButton: SKNode {
-    var label: SKLabelNode
+    var label: SKLabelNode?
+    var icon: SKSpriteNode?
     var panel: SKSpriteNode?
-    var _disabled: Bool
-    var highlighted: Bool
+    var _disabled: Bool = false
+    var highlighted: Bool = false
     var buttonDidToucheBlock: dispatch_block_t?
 
-    init(fontNamed:NSString, fontSize:CGFloat, buttonSize:CGSize? = nil) {
-        self.label = SKLabelNode(fontNamed: fontNamed)
-        self.label.fontSize = fontSize
-        self.highlighted = false
-        self._disabled = false
-
+    override init() {
         super.init()
-
-        if buttonSize != nil {
-            var panel = SKSpriteNode(color: SKColor.grayColor(), size: buttonSize!)
-            panel.position = CGPointMake(0, buttonSize!.height * 0.3)
-            self.addChild(panel)
-            self.panel = panel
-        }
-
         self.userInteractionEnabled = true
+    }
 
-        self.addChild(self.label)
+    convenience init(iconTexture:SKTexture, buttonSize:CGSize? = nil) {
+        self.init()
+
+        self.addPanel(buttonSize, withIcon: true)
+
+        let icon = SKSpriteNode(texture: iconTexture)
+        icon.xScale = 2.0
+        icon.yScale = 2.0
+        self.addChild(icon)
+        self.icon = icon
+    }
+
+    convenience init(fontNamed:NSString, fontSize:CGFloat, buttonSize:CGSize? = nil) {
+        self.init()
+
+        self.addPanel(buttonSize)
+
+        let label = SKLabelNode(fontNamed: fontNamed)
+        label.fontSize = fontSize
+        self.addChild(label)
+        self.label = label
     }
 
     deinit {
+        self.label = nil
+        self.icon = nil
         self.panel = nil
         self.buttonDidToucheBlock = nil
     }
@@ -47,12 +58,12 @@ class DKButton: SKNode {
         fatalError("init(coder:) has not been implemented")
     }
 
-    var text:NSString {
+    var text:String? {
         get {
-            return self.label.text
+            return self.label?.text
         }
         set (value) {
-            self.label.text = value
+            self.label?.text = value!
         }
     }
 
@@ -77,9 +88,18 @@ class DKButton: SKNode {
         }
     }
 
+    func addPanel(buttonSize:CGSize?, withIcon:Bool = false) {
+        if buttonSize != nil {
+            var panel = SKSpriteNode(color: SKColor.grayColor(), size: buttonSize!)
+            panel.position = CGPointMake(0, withIcon ? 0 : buttonSize!.height * 0.3)
+            self.addChild(panel)
+            self.panel = panel
+        }
+    }
+
     func setHighLighted(highlighted:Bool) {
         self.highlighted = highlighted
-        self.label.colorBlendFactor = (self.highlighted ? 0.7 : 0)
+        self.label?.colorBlendFactor = (self.highlighted ? 0.7 : 0)
         // 色とサイズのみのSpriteではブレンドが効かない
 //        self.panel.colorBlendFactor = (self.highlighted ? 0.7 : 0)
     }
