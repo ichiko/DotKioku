@@ -8,9 +8,8 @@
 
 import Foundation
 
-let LabelFontName = "Chalkduster"
-
 struct Constants {
+    static let LabelFontName = "Chalkduster"
     static let LabelFontSize:Int = 4
 
     struct Sound {

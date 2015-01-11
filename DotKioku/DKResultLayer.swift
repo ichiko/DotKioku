@@ -23,14 +23,14 @@ class DKResultLayer:SKNode {
     }
 
     func addTitle(name:String) {
-        let lbTitle = SKLabelNode(fontNamed: LabelFontName)
+        let lbTitle = SKLabelNode(fontNamed: Constants.LabelFontName)
         lbTitle.text = name
         lbTitle.position = CGPointMake(0, TitleLabelBottom)
         self.addChild(lbTitle)
     }
 
     func addScore(score:Int) {
-        let lbScore = SKLabelNode(fontNamed: LabelFontName)
+        let lbScore = SKLabelNode(fontNamed: Constants.LabelFontName)
         lbScore.text = NSString(format: "score %d", score)
         self.addChild(lbScore)
     }

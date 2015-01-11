@@ -227,46 +227,46 @@ class GameScene: SKScene, DKCommandDelegate {
     func addLabels() {
         let posCenter = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame) + 60)
 
-        let lbReady = SKLabelNode(fontNamed: LabelFontName)
+        let lbReady = SKLabelNode(fontNamed: Constants.LabelFontName)
         lbReady.text = "Ready ?";
         lbReady.position = posCenter
 
-        let lbMiss = SKLabelNode(fontNamed: LabelFontName)
+        let lbMiss = SKLabelNode(fontNamed: Constants.LabelFontName)
         lbMiss.text = "Not Collect !"
         lbMiss.position = posCenter
         lbMiss.hidden = true
         lbMiss.fontColor = SKColor.redColor()
 
-        let lbTimeOver = SKLabelNode(fontNamed: LabelFontName)
+        let lbTimeOver = SKLabelNode(fontNamed: Constants.LabelFontName)
         lbTimeOver.text = "Time Over !"
         lbTimeOver.position = posCenter
         lbTimeOver.hidden = true
         lbTimeOver.fontColor = SKColor.redColor()
 
-        let lbSuccess = SKLabelNode(fontNamed: LabelFontName)
+        let lbSuccess = SKLabelNode(fontNamed: Constants.LabelFontName)
         lbSuccess.text = "Success !"
         lbSuccess.position = posCenter
         lbSuccess.hidden = true
         lbSuccess.fontColor = SKColor.greenColor()
 
-        let lbStart = SKLabelNode(fontNamed: LabelFontName)
+        let lbStart = SKLabelNode(fontNamed: Constants.LabelFontName)
         lbStart.text = "Start !"
         lbStart.position = posCenter
         lbStart.hidden = true
         lbStart.fontColor = SKColor.orangeColor()
 
-        let lbNextRound = SKLabelNode(fontNamed: LabelFontName)
+        let lbNextRound = SKLabelNode(fontNamed: Constants.LabelFontName)
         lbNextRound.text = "Go Next Round"
         lbNextRound.position = CGPointMake(posCenter.x, posCenter.y - 40)
         lbNextRound.hidden = true
 
-        let lbTimer = SKLabelNode(fontNamed: LabelFontName)
+        let lbTimer = SKLabelNode(fontNamed: Constants.LabelFontName)
         lbTimer.text = "0"
         lbTimer.position = CGPointMake(0, self.frame.height - 30.0)
         lbTimer.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
         lbTimer.hidden = true
 
-        let lbCardNum = SKLabelNode(fontNamed: LabelFontName)
+        let lbCardNum = SKLabelNode(fontNamed: Constants.LabelFontName)
         lbCardNum.text = "00/00"
         lbCardNum.position = CGPointMake(self.frame.width, self.frame.height - 30.0)
         lbCardNum.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Right
