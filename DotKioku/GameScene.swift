@@ -51,7 +51,7 @@ class GameScene: SKScene, DKCommandDelegate {
     var cardTableLayer:SKNode?
     var commandLayer:DKCommandLayer?
 
-    var readyLabel:DKButton?
+    var readyLabel:SKLabelNode?
     var missLabel:SKLabelNode?
     var timeOverLabel:SKLabelNode?
     var successLabel:SKLabelNode?
@@ -98,7 +98,11 @@ class GameScene: SKScene, DKCommandDelegate {
     }
 
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        if self.status == .GameOver {
+        if self.status == .WaitForReady {
+            AudioUtils.shared.playEffect(Constants.Sound.SERankUp, type: Constants.Sound.Type)
+            self.status = .Preview
+            self.readyLabel!.hidden = true
+        } else if self.status == .GameOver {
             let skView:SKView = self.view!
 
             let scene = GameScene(size: skView.bounds.size)
@@ -223,11 +227,9 @@ class GameScene: SKScene, DKCommandDelegate {
     func addLabels() {
         let posCenter = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame) + 60)
 
-        let lbReady = DKButton(fontNamed:LabelFontName, fontSize:65)
+        let lbReady = SKLabelNode(fontNamed: LabelFontName)
         lbReady.text = "Ready ?";
-        lbReady.backgroundColor = SKColor.whiteColor()
         lbReady.position = posCenter
-        lbReady.buttonDidToucheBlock = buttonTouched
 
         let lbMiss = SKLabelNode(fontNamed: LabelFontName)
         lbMiss.text = "Not Collect !"
@@ -367,14 +369,6 @@ class GameScene: SKScene, DKCommandDelegate {
         let result = DKResultLayer(setInfo: self.engine.info, score: self.engine.score)
         result.position = CGPointMake(CGRectGetMidX(self.view!.frame), CGRectGetMidY(self.view!.frame) - ResultLayerBottomFromCenter)
         self.addChild(result)
-    }
-
-    func buttonTouched() {
-        if self.status == .WaitForReady {
-            AudioUtils.shared.playEffect(Constants.Sound.SERankUp, type: Constants.Sound.Type)
-            self.status = .Preview
-            self.readyLabel!.hidden = true
-        }
     }
 
     func commandSelected(typeId: Int) {
