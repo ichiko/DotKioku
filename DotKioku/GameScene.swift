@@ -10,6 +10,7 @@ import SpriteKit
 
 let StartDurationOver = 0.5
 let PreviewOverPerCard = 1.0
+let PlayerTurnStartingCountDown = 1.0
 let PlayerTurnRunningOverPerCard = 1.0
 let SucceedingWaitForNotice = 1.0
 let SucceedingWaitForNextRound = 2.0
@@ -36,6 +37,7 @@ enum GameStatus : String {
     case
     StartDuration = "StartDuration",
     WaitForReady = "WaitForReady", // wait player tap
+    PreviewStarted = "PreviewStarted",
     Preview = "Preview",      // show card to remember
     PreviewEnded = "PreviewEnded", // end preview, wait animation end
     PlayerTurnStarted = "PlayerTurnStarted",   // timer start, enable command
@@ -100,7 +102,7 @@ class GameScene: SKScene, DKCommandDelegate {
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         if self.status == .WaitForReady {
             AudioUtils.shared.playEffect(Constants.Sound.SERankUp, type: Constants.Sound.Type)
-            self.status = .Preview
+            self.status = .PreviewStarted
             self.readyLabel!.hidden = true
         } else if self.status == .GameOver {
             let skView:SKView = self.view!
@@ -131,6 +133,9 @@ class GameScene: SKScene, DKCommandDelegate {
                 self.cardCount = 0
                 self.engine.startPreview()
             }
+        case .PreviewStarted:
+            self.status = .Preview
+            self.timerSaved = currentTime
         case .Preview:
             if timeDiff >= PreviewOverPerCard {
                 self.timerSaved = currentTime
@@ -151,20 +156,23 @@ class GameScene: SKScene, DKCommandDelegate {
                 }
             }
         case .PlayerTurnStarted:
-            self.status = .PlayerTurnRunning
-            self.timerSaved = currentTime
-            self.cardCount = 0
+            if self.startLabel!.hidden {
+                self.timerSaved = currentTime
+                self.startLabel!.hidden = false
+                self.timerLabel!.hidden = false
+            } else if timeDiff >= PlayerTurnStartingCountDown {
+                self.status = .PlayerTurnRunning
+                self.timerSaved = currentTime
+                self.cardCount = 0
 
-            self.playerTurnOver = PlayerTurnRunningOverPerCard * Double(engine.cardCount)
-            println(self.playerTurnOver)
+                self.playerTurnOver = PlayerTurnRunningOverPerCard * Double(engine.cardCount)
+                println(self.playerTurnOver)
 
-            self.startLabel!.hidden = false
-            self.setHideAction(self.startLabel!, duration: PlayerStartNoticeDuration)
-            self.timerLabel!.hidden = false
-
-            self.commandLayer!.disabled = false
-            self.resetCardTable()
-            self.engine.startInput()
+                self.startLabel!.hidden = true
+                self.commandLayer!.disabled = false
+                self.resetCardTable()
+                self.engine.startInput()
+            }
         case .PlayerTurnRunning:
             if timeDiff >= self.playerTurnOver {
                 self.status = .PlayerTimeOver
