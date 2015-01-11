@@ -10,14 +10,14 @@ import SpriteKit
 
 let StartDurationOver = 0.5
 let PreviewOverPerCard = 1.0
-let PlayerTurnStartingCountDown = 1.0
+let PlayerTurnStartingDelay = 0.5
 let PlayerTurnRunningOverPerCard = 1.0
 let SucceedingWaitForNotice = 1.0
 let SucceedingWaitForNextRound = 2.0
 
 let CardSlideDuration = 0.4
 let PreviewClearnDuration = 0.5
-let PlayerStartNoticeDuration = 1.0
+let PlayerStartedNoticeDuration = 1.0
 let PlayerCompleteNoticeShowDelay = 0.3
 let PlayerCompleteNoticeHideDuration = 1.5
 let PlayerGoNextNoticeDuration = 1.0
@@ -26,6 +26,8 @@ let PlayerCleanDuration = 0.5
 let PlayerFailedNoticeShowDelay = 0.8
 let PlayerResultShowDelay = 0.5
 
+private let CardPositionYFromCenter:CGFloat = 100
+private let CardPositionMoveToYPadding:CGFloat = 80
 let CardLayerBottom:CGFloat = 100
 let CommandLayerBottom:CGFloat = 50
 let ResultLayerBottomFromCenter:CGFloat = 40
@@ -41,6 +43,7 @@ enum GameStatus : String {
     Preview = "Preview",      // show card to remember
     PreviewEnded = "PreviewEnded", // end preview, wait animation end
     PlayerTurnStarted = "PlayerTurnStarted",   // timer start, enable command
+    PlayerTunrStartingWait = "PlayerTurnStartingWait",
     PlayerTurnRunning = "PlayerTurnRunning",
     PlayerTurnEnded = "PlayerTurnEnded",
     PlayerCompleted = "PlayerCompleted", // wait a moment then goto Preview
@@ -50,7 +53,8 @@ enum GameStatus : String {
 }
 
 class GameScene: SKScene, DKCommandDelegate {
-    var cardTableLayer:SKNode?
+    var previewTable:SKNode?
+    var playerTable:DKCardTable?
     var commandLayer:DKCommandLayer?
 
     var readyLabel:SKLabelNode?
@@ -87,7 +91,7 @@ class GameScene: SKScene, DKCommandDelegate {
         timerSaved = CACurrentMediaTime()
         engine.newGame()
 
-        self.addCardTable()
+        self.addCardTables()
         self.addLabels()
         self.addBar()
 
@@ -141,7 +145,7 @@ class GameScene: SKScene, DKCommandDelegate {
                 self.timerSaved = currentTime
                 if self.engine.hasNext() {
                     self.cardCount++
-                    self.addCard(self.engine.next(), offset: 0)
+                    self.addPreviewCard(self.engine.next(), offset: 0)
                 } else {
                     self.status = .PreviewEnded
 
@@ -152,31 +156,37 @@ class GameScene: SKScene, DKCommandDelegate {
                     })
 
                     let seq = SKAction.sequence([waitAction, cleanAction, afterAction])
-                    self.cardTableLayer!.runAction(seq)
+                    self.previewTable!.runAction(seq)
                 }
             }
         case .PlayerTurnStarted:
-            if self.startLabel!.hidden {
-                self.timerSaved = currentTime
-                self.startLabel!.hidden = false
-                self.timerLabel!.hidden = false
-            } else if timeDiff >= PlayerTurnStartingCountDown {
+            self.status = .PlayerTunrStartingWait
+            self.timerSaved = currentTime
+
+            self.startLabel!.hidden = false
+            self.setHideAction(self.startLabel!, duration: PlayerStartedNoticeDuration)
+
+            self.playerTurnOver = PlayerTurnRunningOverPerCard * Double(self.engine.cardCount)
+            println(self.playerTurnOver)
+
+            self.updateTimer(0)
+            self.timerLabel!.hidden = false
+            self.timeBar!.hidden = false
+        case .PlayerTunrStartingWait:
+            if timeDiff >= PlayerTurnStartingDelay {
                 self.status = .PlayerTurnRunning
                 self.timerSaved = currentTime
                 self.cardCount = 0
 
-                self.playerTurnOver = PlayerTurnRunningOverPerCard * Double(engine.cardCount)
-                println(self.playerTurnOver)
-
-                self.startLabel!.hidden = true
                 self.commandLayer!.disabled = false
-                self.resetCardTable()
+                self.resetPreviewTable()
                 self.engine.startInput()
             }
         case .PlayerTurnRunning:
             if timeDiff >= self.playerTurnOver {
                 self.status = .PlayerTimeOver
                 self.timerSaved = currentTime
+                self.timeBar!.hidden = true
             }
         case .PlayerTurnEnded:
             self.status = .PlayerCompleted
@@ -186,11 +196,11 @@ class GameScene: SKScene, DKCommandDelegate {
             self.endNoticeShown = false
 
             let waitAction = SKAction.waitForDuration(PlayerCleanWaitDuration)
-            let cleanAction = SKAction.moveTo(CGPointMake(0, -CGRectGetMidY(self.frame) - CardLayerBottom),
+            let cleanAction = SKAction.moveTo(CGPointMake(CGRectGetMidX(self.frame), -CardPositionMoveToYPadding),
                 duration: PlayerCleanDuration)
 
             let seq = SKAction.sequence([waitAction, cleanAction])
-            self.cardTableLayer!.runAction(seq)
+            self.playerTable!.runAction(seq)
         case .PlayerMissed:
             self.commandLayer!.disabled = true
             self.setShowResultAction(self.missLabel!)
@@ -205,9 +215,10 @@ class GameScene: SKScene, DKCommandDelegate {
             if timeDiff >= SucceedingWaitForNextRound {
                 self.status = .Preview
                 self.timerLabel!.hidden = true
+                self.timeBar!.hidden = true
                 self.timerSaved = currentTime
                 self.cardCount = 0
-                self.resetCardTable()
+                self.resetPlayerTable()
                 self.engine.nextRound()
                 AudioUtils.shared.playEffect(Constants.Sound.SERankUp, type: Constants.Sound.Type)
             } else if !self.endNoticeShown && timeDiff >= SucceedingWaitForNotice {
@@ -220,16 +231,30 @@ class GameScene: SKScene, DKCommandDelegate {
         }
     }
 
-    func addCardTable() {
-        let cardLayer = SKNode()
-        cardLayer.position = CGPointMake(0, CardLayerBottom)
-        self.addChild(cardLayer)
-        self.cardTableLayer = cardLayer
+    func addCardTables() {
+        let posCenter = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + CardPositionYFromCenter)
+
+        let previewTable = SKNode()
+        previewTable.position = CGPointMake(0, CardLayerBottom)
+        self.addChild(previewTable)
+        self.previewTable = previewTable
+
+        let playerTable = DKCardTable(frame: self.frame)
+        playerTable.position = posCenter
+        self.addChild(playerTable)
+        self.playerTable = playerTable
     }
 
-    func resetCardTable() {
-        self.cardTableLayer!.position = CGPointMake(0, CardLayerBottom)
-        self.cardTableLayer!.removeAllChildren()
+    func resetPreviewTable() {
+        self.previewTable!.position = CGPointMake(0, CardLayerBottom)
+        self.previewTable!.removeAllChildren()
+    }
+
+    func resetPlayerTable() {
+        let posCenter = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + CardPositionYFromCenter)
+
+        self.playerTable!.position = posCenter
+        self.playerTable!.removeAllChildren()
     }
 
     func addLabels() {
@@ -302,6 +327,7 @@ class GameScene: SKScene, DKCommandDelegate {
         let bar = SKSpriteNode(color: SKColor.greenColor(), size: CGSizeMake(self.frame.width, TimeBarHeight))
         bar.position = CGPointMake(0, TimeBarBottom)
         bar.anchorPoint = CGPointMake(0, 0)
+        bar.hidden = true
 
         self.addChild(bar)
         self.timeBar = bar
@@ -314,6 +340,9 @@ class GameScene: SKScene, DKCommandDelegate {
                 self.timerLabel!.text = NSString(format: "% 2.2f", Float(rest))
 
                 let progress = rest / self.playerTurnOver
+                if progress < 0.8 {
+                    println(self.status)
+                }
                 self.timeBar?.xScale = CGFloat(progress)
                 if progress >= 0.5 {
                     self.timeBar?.color = SKColor.greenColor()
@@ -323,23 +352,28 @@ class GameScene: SKScene, DKCommandDelegate {
                     self.timeBar?.color = SKColor.redColor()
                 }
             }
-        } else if self.status == .Preview || self.status == .PreviewEnded {
+        } else {
             self.timeBar?.xScale = 1.0
             self.timeBar?.color = SKColor.greenColor()
         }
     }
 
-    func addCard(cardInfo:Card, offset:CGFloat, slideDown:Bool = true) {
+    func addPreviewCard(cardInfo:Card, offset:CGFloat) {
         let card = DKCard(cardInfo: cardInfo)
         let posTo = CGPoint(x:CGRectGetMidX(self.frame) + offset, y:CGRectGetMidY(self.frame));
-        let posFrom = CGPointMake(CGRectGetMidX(self.frame), slideDown ? self.frame.height : 0)
+        let posFrom = CGPointMake(CGRectGetMidX(self.frame), self.frame.height)
         card.position = posFrom
 
         let action = SKAction.moveTo(posTo, duration: CardSlideDuration)
 
         card.runAction(action)
 
-        self.cardTableLayer!.addChild(card)
+        self.previewTable!.addChild(card)
+        AudioUtils.shared.playEffect(Constants.Sound.SECard, type: Constants.Sound.Type)
+    }
+
+    func addPlayerCard(cardInfo:Card, offset:CGFloat) {
+        self.playerTable!.addCard(cardInfo, offset: offset, slideDown: false)
         AudioUtils.shared.playEffect(Constants.Sound.SECard, type: Constants.Sound.Type)
     }
 
@@ -382,7 +416,7 @@ class GameScene: SKScene, DKCommandDelegate {
     func commandSelected(typeId: Int) {
         if self.status == .PlayerTurnRunning {
             self.cardCount++
-            self.addCard(self.engine.getCardByTypeId(typeId)!, offset: 0, slideDown: false)
+            self.addPlayerCard(self.engine.getCardByTypeId(typeId)!, offset: 0)
             if self.engine.checkInput(typeId) {
                 self.engine.next()
                 if !self.engine.hasNext() {
