@@ -26,8 +26,6 @@ let PlayerCleanDuration = 0.5
 let PlayerFailedNoticeShowDelay = 0.8
 let PlayerResultShowDelay = 0.5
 
-private let CardPositionYFromCenter:CGFloat = 100
-private let CardPositionMoveToYPadding:CGFloat = 80
 let CardLayerBottom:CGFloat = 100
 let CommandLayerBottom:CGFloat = 50
 let ResultLayerBottomFromCenter:CGFloat = 40
@@ -150,7 +148,7 @@ class GameScene: SKScene, DKCommandDelegate {
                     self.status = .PreviewEnded
 
                     let waitAction = SKAction.waitForDuration(PreviewOverPerCard - PreviewClearnDuration)
-                    let cleanAction = SKAction.moveTo(CGPointMake(0, self.view!.frame.height), duration: PreviewClearnDuration)
+                    let cleanAction = SKAction.moveBy(CGVectorMake(0, self.frame.height), duration: PreviewClearnDuration)
                     let afterAction = SKAction.runBlock({ () -> Void in
                         self.status = .PlayerTurnStarted
                     })
@@ -196,8 +194,7 @@ class GameScene: SKScene, DKCommandDelegate {
             self.endNoticeShown = false
 
             let waitAction = SKAction.waitForDuration(PlayerCleanWaitDuration)
-            let cleanAction = SKAction.moveTo(CGPointMake(CGRectGetMidX(self.frame), -CardPositionMoveToYPadding),
-                duration: PlayerCleanDuration)
+            let cleanAction = SKAction.moveBy(CGVectorMake(0, -self.frame.height), duration: PlayerCleanDuration)
 
             let seq = SKAction.sequence([waitAction, cleanAction])
             self.playerTable!.runAction(seq)
@@ -232,15 +229,13 @@ class GameScene: SKScene, DKCommandDelegate {
     }
 
     func addCardTables() {
-        let posCenter = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + CardPositionYFromCenter)
-
         let previewTable = SKNode()
         previewTable.position = CGPointMake(0, CardLayerBottom)
         self.addChild(previewTable)
         self.previewTable = previewTable
 
-        let playerTable = DKCardTable(frame: self.frame)
-        playerTable.position = posCenter
+        let playerTable = DKCardTable()
+        playerTable.position = CGPointMake(0, CardLayerBottom)
         self.addChild(playerTable)
         self.playerTable = playerTable
     }
@@ -251,9 +246,7 @@ class GameScene: SKScene, DKCommandDelegate {
     }
 
     func resetPlayerTable() {
-        let posCenter = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + CardPositionYFromCenter)
-
-        self.playerTable!.position = posCenter
+        self.playerTable!.position = CGPointMake(0, CardLayerBottom)
         self.playerTable!.removeAllChildren()
     }
 
