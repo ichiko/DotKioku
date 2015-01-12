@@ -8,8 +8,8 @@
 
 import SpriteKit
 
-let CardWidth:CGFloat = 120
-let CardHeight:CGFloat = 150
+let kDKCardWidth:CGFloat = 120
+let kDKCardHeight:CGFloat = 150
 
 class DKCard: SKNode {
     var cardInfo: Card
@@ -20,17 +20,17 @@ class DKCard: SKNode {
 
         super.init()
 
-        let panel = SKSpriteNode(color: SKColor.whiteColor(), size: CGSizeMake(CardWidth, CardHeight))
+        let panel = SKSpriteNode(color: SKColor.whiteColor(), size: CGSizeMake(kDKCardWidth, kDKCardHeight))
         let path = UIBezierPath()
         path.moveToPoint(CGPointMake(0, 0))
-        path.addLineToPoint(CGPointMake(0, CardHeight))
-        path.addLineToPoint(CGPointMake(CardWidth, CardHeight))
-        path.addLineToPoint(CGPointMake(CardWidth, 0))
+        path.addLineToPoint(CGPointMake(0, kDKCardHeight))
+        path.addLineToPoint(CGPointMake(kDKCardWidth, kDKCardHeight))
+        path.addLineToPoint(CGPointMake(kDKCardWidth, 0))
         path.addLineToPoint(CGPointMake(0, 0))
         let border = SKShapeNode(path: path.CGPath)
         border.strokeColor = SKColor.blackColor()
         border.lineWidth = 4
-        border.position = CGPointMake(-CardWidth/2, -CardHeight/2)
+        border.position = CGPointMake(-kDKCardWidth / 2, -kDKCardHeight / 2)
 
         self.addChild(panel)
         self.addChild(border)

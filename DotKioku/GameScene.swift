@@ -52,7 +52,7 @@ enum GameStatus : String {
 
 class GameScene: SKScene, DKCommandDelegate {
     var previewTable:SKNode?
-    var playerTable:DKCardTable?
+    var playerTable:DKPlayerTable?
     var commandLayer:DKCommandLayer?
 
     var readyLabel:SKLabelNode?
@@ -234,7 +234,7 @@ class GameScene: SKScene, DKCommandDelegate {
         self.addChild(previewTable)
         self.previewTable = previewTable
 
-        let playerTable = DKCardTable()
+        let playerTable = DKPlayerTable()
         playerTable.position = CGPointMake(0, CardLayerBottom)
         self.addChild(playerTable)
         self.playerTable = playerTable
@@ -366,7 +366,7 @@ class GameScene: SKScene, DKCommandDelegate {
     }
 
     func addPlayerCard(cardInfo:Card, offset:CGFloat) {
-        self.playerTable!.addCard(cardInfo, offset: offset, slideDown: false)
+        self.playerTable!.addCard(cardInfo, offset: offset)
         AudioUtils.shared.playEffect(Constants.Sound.SECard, type: Constants.Sound.Type)
     }
 
