@@ -39,6 +39,12 @@ class GameEngine {
         }
     }
 
+    var answer:Card {
+        get {
+            return self.currentGame!.getCurrent()
+        }
+    }
+
     func newGame() {
         self.cardPool = CardPool(setId: 0, name: "Sage Name")
         self.currentGame = RemembranceArray()

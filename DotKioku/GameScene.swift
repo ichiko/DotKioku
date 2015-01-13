@@ -27,6 +27,8 @@ let PlayerFailedNoticeShowDelay = 0.8
 let PlayerResultShowDelay = 0.5
 
 let CardLayerBottom:CGFloat = 100
+private let kPlayerTableBottom:CGFloat = 30
+
 let CommandLayerBottom:CGFloat = 50
 let ResultLayerBottomFromCenter:CGFloat = 40
 
@@ -88,6 +90,10 @@ class GameScene: SKScene, DKCommandDelegate {
         /* Setup your scene here */
         timerSaved = CACurrentMediaTime()
         engine.newGame()
+
+        let background = SKSpriteNode(color: SKColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1.0), size: view.frame.size)
+        background.anchorPoint = CGPointMake(0, 0)
+        self.addChild(background)
 
         self.addCardTables()
         self.addLabels()
@@ -193,11 +199,7 @@ class GameScene: SKScene, DKCommandDelegate {
             self.commandLayer!.disabled = true
             self.endNoticeShown = false
 
-            let waitAction = SKAction.waitForDuration(PlayerCleanWaitDuration)
-            let cleanAction = SKAction.moveBy(CGVectorMake(0, -self.frame.height), duration: PlayerCleanDuration)
-
-            let seq = SKAction.sequence([waitAction, cleanAction])
-            self.playerTable!.runAction(seq)
+            self.playerTable!.runResetAction()
         case .PlayerMissed:
             self.commandLayer!.disabled = true
             self.setShowResultAction(self.missLabel!)
@@ -235,7 +237,7 @@ class GameScene: SKScene, DKCommandDelegate {
         self.previewTable = previewTable
 
         let playerTable = DKPlayerTable()
-        playerTable.position = CGPointMake(0, CardLayerBottom)
+        playerTable.position = CGPointMake(0, kPlayerTableBottom)
         self.addChild(playerTable)
         self.playerTable = playerTable
     }
@@ -246,7 +248,7 @@ class GameScene: SKScene, DKCommandDelegate {
     }
 
     func resetPlayerTable() {
-        self.playerTable!.position = CGPointMake(0, CardLayerBottom)
+        self.playerTable!.position = CGPointMake(0, kPlayerTableBottom)
         self.playerTable!.removeAllChildren()
     }
 
@@ -355,9 +357,13 @@ class GameScene: SKScene, DKCommandDelegate {
         AudioUtils.shared.playEffect(Constants.Sound.SECard, type: Constants.Sound.Type)
     }
 
-    func addPlayerCard(cardInfo:Card, offset:CGFloat) {
-        self.playerTable!.addCard(cardInfo, offset: offset)
+    func addPlayerCard(cardInfo:Card, offset:CGFloat, block:dispatch_block_t? = nil, duration:NSTimeInterval = 0) {
+        self.playerTable!.addCard(cardInfo, withBlock: block, duration:duration)
         AudioUtils.shared.playEffect(Constants.Sound.SECard, type: Constants.Sound.Type)
+    }
+
+    func addAnswerCard(cardInfo:Card) {
+        self.playerTable!.addAnswerCard(cardInfo)
     }
 
     func setHideAction(node:SKNode!, duration:CFTimeInterval) {
@@ -399,14 +405,19 @@ class GameScene: SKScene, DKCommandDelegate {
     func commandSelected(typeId: Int) {
         if self.status == .PlayerTurnRunning {
             self.cardCount++
-            self.addPlayerCard(self.engine.getCardByTypeId(typeId)!, offset: 0)
+            self.addAnswerCard(self.engine.answer)
             if self.engine.checkInput(typeId) {
                 self.engine.next()
                 if !self.engine.hasNext() {
-                    self.status = .PlayerTurnEnded
                     self.commandLayer!.disabled = true
+                    self.addPlayerCard(self.engine.getCardByTypeId(typeId)!, offset: 0, block: { () -> Void in
+                        self.status = .PlayerTurnEnded
+                    }, duration: 0.2)
+                } else {
+                    self.addPlayerCard(self.engine.getCardByTypeId(typeId)!, offset: 0)
                 }
             } else {
+                self.addPlayerCard(self.engine.getCardByTypeId(typeId)!, offset: 0)
                 self.status = .PlayerMissed
                 self.commandLayer!.disabled = true
             }
