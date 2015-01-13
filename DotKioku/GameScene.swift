@@ -124,7 +124,6 @@ class GameScene: SKScene, DKCommandDelegate {
 
         let timeDiff = currentTime - timerSaved
 
-        self.updateTimer(timeDiff)
         self.cardNumLabel!.text = NSString(format: "%2d / %2d", self.cardCount, self.engine.cardCount)
 
         switch self.status {
@@ -181,6 +180,7 @@ class GameScene: SKScene, DKCommandDelegate {
                 self.engine.startInput()
             }
         case .PlayerTurnRunning:
+            self.updateTimer(timeDiff)
             if timeDiff >= self.playerTurnOver {
                 self.status = .PlayerTimeOver
                 self.timerSaved = currentTime
@@ -327,27 +327,17 @@ class GameScene: SKScene, DKCommandDelegate {
     }
 
     func updateTimer(timeDiff:CFTimeInterval) {
-        if self.status == .PlayerTurnStarted || self.status == .PlayerTurnRunning {
-            if !self.timerLabel!.hidden {
-                let rest = max(0, self.playerTurnOver - timeDiff)
-                self.timerLabel!.text = NSString(format: "% 2.2f", Float(rest))
+        let rest = max(0, self.playerTurnOver - timeDiff)
+        self.timerLabel!.text = NSString(format: "% 2.2f", Float(rest))
 
-                let progress = rest / self.playerTurnOver
-                if progress < 0.8 {
-                    println(self.status)
-                }
-                self.timeBar?.xScale = CGFloat(progress)
-                if progress >= 0.5 {
-                    self.timeBar?.color = SKColor.greenColor()
-                } else if progress >= 0.25 {
-                    self.timeBar?.color = SKColor.yellowColor()
-                } else {
-                    self.timeBar?.color = SKColor.redColor()
-                }
-            }
-        } else {
-            self.timeBar?.xScale = 1.0
+        let progress = rest / self.playerTurnOver
+        self.timeBar?.xScale = CGFloat(progress)
+        if progress >= 0.5 {
             self.timeBar?.color = SKColor.greenColor()
+        } else if progress >= 0.25 {
+            self.timeBar?.color = SKColor.yellowColor()
+        } else {
+            self.timeBar?.color = SKColor.redColor()
         }
     }
 
