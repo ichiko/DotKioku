@@ -53,7 +53,7 @@ class GameViewController: UIViewController {
         self.view.addSubview(bannerView)
 
         let request = GADRequest()
-        request.testDevices = NSArray(array: [GAD_SIMULATOR_ID])
+        request.testDevices = NSArray(array: [GAD_SIMULATOR_ID, "f7e98f6075a6c86592843e4001dd4537"])
         bannerView.loadRequest(request)
 
         self.bannerView = bannerView
