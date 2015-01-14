@@ -53,6 +53,13 @@ enum GameStatus : String {
     GameOver = "GameOver"
 }
 
+enum GameOverType : String {
+    case
+    None = "None",
+    PlayerMiss = "PlayerMiss",
+    TimeOver = "TimerOver"
+}
+
 class GameScene: SKScene, DKCommandDelegate {
     var previewTable:SKNode?
     var playerTable:DKPlayerTable?
@@ -70,6 +77,7 @@ class GameScene: SKScene, DKCommandDelegate {
     var cardNumLabel:SKLabelNode?
 
     var _status:GameStatus = .StartDuration
+    var endType:GameOverType = .None
     var timerSaved:CFTimeInterval = 0
     var playerTurnOver:CFTimeInterval = 0
     var endNoticeShown:Bool = false
@@ -89,6 +97,8 @@ class GameScene: SKScene, DKCommandDelegate {
 
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
+        GoogleAnalyticsManager.sendScreenName("GameScene")
+
         timerSaved = CACurrentMediaTime()
         engine.newGame()
 
@@ -206,11 +216,13 @@ class GameScene: SKScene, DKCommandDelegate {
             self.commandLayer!.disabled = true
             self.setShowResultAction(self.missLabel!)
             self.status = .GameOver
+            self.endType = .PlayerMiss
             AudioUtils.shared.playEffect(Constants.Sound.SEFail, type: Constants.Sound.Type)
         case .PlayerTimeOver:
             self.commandLayer!.disabled = true
             self.setShowResultAction(self.timeOverLabel!)
             self.status = .GameOver
+            self.endType = .TimeOver
             AudioUtils.shared.playEffect(Constants.Sound.SEFail, type: Constants.Sound.Type)
         case .PlayerCompleted:
             if timeDiff >= SucceedingWaitForNextRound {
@@ -399,7 +411,16 @@ class GameScene: SKScene, DKCommandDelegate {
     }
 
     func showResult() {
-        let result = DKResultLayer(setInfo: self.engine.info, score: self.engine.score)
+        let stageName = self.engine.info.name
+        let score = self.engine.score
+        let type = self.endType.rawValue
+
+        GoogleAnalyticsManager.sendEvent(Constants.Track.CategoryScore,
+            action: stageName, label: String(score), value: score)
+        GoogleAnalyticsManager.sendEvent(Constants.Track.CategoryRetireType,
+            action: stageName, label: type, value: score)
+
+        let result = DKResultLayer(setInfo: self.engine.info, score: score)
         result.position = CGPointMake(CGRectGetMidX(self.view!.frame), CGRectGetMidY(self.view!.frame) - ResultLayerBottomFromCenter)
         self.addChild(result)
     }

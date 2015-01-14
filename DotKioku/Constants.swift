@@ -27,4 +27,12 @@ struct Constants {
     struct Ads {
         static let BannerUnitID = "ca-app-pub-4449584771405934/6448256002"
     }
+
+    struct Track {
+        static let TrackingID = "UA-50629803-8"
+        static let CategoryScore = "Score"
+        static let CategoryRetireType = "RetireType"
+        static let LabelPlayerMiss = "PlayerMiss"
+        static let LabelTimeOver = "TimeOver"
+    }
 }

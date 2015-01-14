@@ -11,4 +11,9 @@
 
 #import "GADBannerView.h"
 
+#import "GAI.h"
+#import "GAIDictionaryBuilder.h"
+#import "GAIFields.h"
+#import "GAILogger.h"
+
 #endif

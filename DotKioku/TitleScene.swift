@@ -10,6 +10,8 @@ import SpriteKit
 
 class TitleScene: SKScene {
     override func didMoveToView(view: SKView) {
+        GoogleAnalyticsManager.sendScreenName("TitleScene")
+
         let atlas = SKTextureAtlas(named: "assets")
         let background = SKSpriteNode(texture: atlas.textureNamed("background.png"))
         background.anchorPoint = CGPointMake(0, 0)

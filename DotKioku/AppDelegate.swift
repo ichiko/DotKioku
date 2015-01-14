@@ -17,6 +17,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
 
+        GoogleAnalyticsManager.configure()
+
+        let appVersion = NSBundle.mainBundle().infoDictionary![kCFBundleVersionKey] as String
+        GoogleAnalyticsManager.setAppVersion(appVersion)
+
         AudioUtils.shared.preload(Constants.Sound.SERankUp, type: Constants.Sound.Type)
 
         return true
