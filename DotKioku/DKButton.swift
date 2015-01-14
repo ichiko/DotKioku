@@ -30,8 +30,8 @@ class DKButton: SKNode {
         self.addPanel(buttonSize, withIcon: true)
 
         let icon = SKSpriteNode(texture: iconTexture)
-        icon.xScale = 2.0
-        icon.yScale = 2.0
+        icon.xScale = 0.7
+        icon.yScale = 0.7
         self.addChild(icon)
         self.icon = icon
     }

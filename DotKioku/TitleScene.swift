@@ -10,6 +10,10 @@ import SpriteKit
 
 class TitleScene: SKScene {
     override func didMoveToView(view: SKView) {
+        let atlas = SKTextureAtlas(named: "assets")
+        let background = SKSpriteNode(texture: atlas.textureNamed("background.png"))
+        background.anchorPoint = CGPointMake(0, 0)
+
         let lbTitle = SKLabelNode(fontNamed: Constants.LabelFontName)
         lbTitle.text = Constants.Text.AppName
         lbTitle.fontSize = Constants.FontSizeLarge
@@ -28,6 +32,7 @@ class TitleScene: SKScene {
             skView.presentScene(scene)
         }
 
+        self.addChild(background)
         self.addChild(lbTitle)
         self.addChild(btnPlay)
     }

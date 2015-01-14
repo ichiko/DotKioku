@@ -32,6 +32,7 @@
 		ECB531151A5E39DF002FA5C6 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB531141A5E39DF002FA5C6 /* Constants.swift */; };
 		ECB531171A5E6FD0002FA5C6 /* DKResultLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB531161A5E6FD0002FA5C6 /* DKResultLayer.swift */; };
 		ECDCB3C91A6635EE00AC2F9E /* TitleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDCB3C81A6635EE00AC2F9E /* TitleScene.swift */; };
+		ECDCB3CB1A66430A00AC2F9E /* assets@2x.atlas in Resources */ = {isa = PBXBuildFile; fileRef = ECDCB3CA1A66430A00AC2F9E /* assets@2x.atlas */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +75,7 @@
 		ECB531141A5E39DF002FA5C6 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		ECB531161A5E6FD0002FA5C6 /* DKResultLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DKResultLayer.swift; sourceTree = "<group>"; };
 		ECDCB3C81A6635EE00AC2F9E /* TitleScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleScene.swift; sourceTree = "<group>"; };
+		ECDCB3CA1A66430A00AC2F9E /* assets@2x.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = "assets@2x.atlas"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,6 +119,7 @@
 			children = (
 				EC539AC81A5FBFBB002A5E96 /* sounds */,
 				ECB3358B1A5CC55E00375F73 /* assets.atlas */,
+				ECDCB3CA1A66430A00AC2F9E /* assets@2x.atlas */,
 				EC22E8541A5BECE000EBED00 /* AppDelegate.swift */,
 				ECDCB3C81A6635EE00AC2F9E /* TitleScene.swift */,
 				EC22E8581A5BECE000EBED00 /* GameScene.swift */,
@@ -272,6 +275,7 @@
 				EC539ACD1A5FBFBB002A5E96 /* SE001_Rankup.wav in Resources */,
 				EC22E85E1A5BECE000EBED00 /* Main.storyboard in Resources */,
 				EC539ACC1A5FBFBB002A5E96 /* SE001_Fail.wav in Resources */,
+				ECDCB3CB1A66430A00AC2F9E /* assets@2x.atlas in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

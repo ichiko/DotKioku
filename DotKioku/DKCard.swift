@@ -59,8 +59,6 @@ class DKCard: SKNode {
 
         let texture = DKUtils.shared.texture(fromTypeId: self.cardInfo.typeId)
         let icon = SKSpriteNode(texture: texture)
-        icon.xScale = 3.0
-        icon.yScale = 3.0
 
         self.addChild(icon)
         self.icon = icon
