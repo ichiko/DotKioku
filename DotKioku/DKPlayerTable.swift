@@ -68,19 +68,20 @@ class DKPlayerTable: DKCardTable {
     }
 
     func runResetAction() {
+        let waitAction = SKAction.waitForDuration(0.4)
         if let card = self.card {
             let moveAction = SKAction.moveBy(CGVectorMake(0, -self.parent!.frame.height), duration: kCardResetMoveDuration)
-            card.runAction(moveAction)
+            card.runAction(SKAction.sequence([waitAction, moveAction]))
         }
 
         self.enumerateChildNodesWithName("behindCard", usingBlock: { (node, stop) -> Void in
             let moveAction = SKAction.moveBy(CGVectorMake(0, -self.parent!.frame.height), duration: kScaledCardResetMoveDuration)
-            node.runAction(moveAction)
+            node.runAction(SKAction.sequence([waitAction, moveAction]))
         })
 
         self.enumerateChildNodesWithName("answer", usingBlock: { (node, stop) -> Void in
             let moveAction = SKAction.moveBy(CGVectorMake(0, self.parent!.frame.height), duration: kAnswerCardResetMoveDuration)
-            node.runAction(moveAction)
+            node.runAction(SKAction.sequence([waitAction, moveAction]))
         })
     }
 
