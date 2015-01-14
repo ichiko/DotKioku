@@ -92,7 +92,8 @@ class GameScene: SKScene, DKCommandDelegate {
         timerSaved = CACurrentMediaTime()
         engine.newGame()
 
-        let background = SKSpriteNode(color: SKColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1.0), size: view.frame.size)
+        let atlas = SKTextureAtlas(named: "assets")
+        let background = SKSpriteNode(texture: atlas.textureNamed("background.png"))
         background.anchorPoint = CGPointMake(0, 0)
         self.addChild(background)
 
