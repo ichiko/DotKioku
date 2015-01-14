@@ -6,11 +6,16 @@
 //  Copyright (c) 2015年 ichiko_revjune. All rights reserved.
 //
 
-import Foundation
+import SpriteKit
 
 struct Constants {
     static let LabelFontName = "Chalkduster"
-    static let LabelFontSize:Int = 4
+
+    static let FontSizeLarge:CGFloat = 42.0
+
+    struct Text {
+        static let AppName = "DotKioku"
+    }
 
     struct Sound {
         static let SEFail = "SE001_Fail"
