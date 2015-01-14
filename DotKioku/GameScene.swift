@@ -45,6 +45,7 @@ enum GameStatus : String {
     PlayerTurnStarted = "PlayerTurnStarted",   // timer start, enable command
     PlayerTunrStartingWait = "PlayerTurnStartingWait",
     PlayerTurnRunning = "PlayerTurnRunning",
+    PlayerTurnWillEnd = "PlayerTurnWillEnd",
     PlayerTurnEnded = "PlayerTurnEnded",
     PlayerCompleted = "PlayerCompleted", // wait a moment then goto Preview
     PlayerMissed = "PlayerMissed",  // wait a moment then show result
@@ -410,6 +411,7 @@ class GameScene: SKScene, DKCommandDelegate {
                 self.engine.next()
                 if !self.engine.hasNext() {
                     self.commandLayer!.disabled = true
+                    self.status = .PlayerTurnWillEnd
                     self.addPlayerCard(self.engine.getCardByTypeId(typeId)!, offset: 0, block: { () -> Void in
                         self.status = .PlayerTurnEnded
                     }, duration: 0.2)
