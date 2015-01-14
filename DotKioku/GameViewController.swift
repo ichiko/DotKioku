@@ -26,6 +26,7 @@ extension SKNode {
 }
 
 class GameViewController: UIViewController {
+    var bannerView:GADBannerView?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,6 +39,24 @@ class GameViewController: UIViewController {
         scene.scaleMode = .AspectFill
 
         skView.presentScene(scene)
+
+        let bannerView = GADBannerView(adSize:kGADAdSizeBanner)
+        bannerView.adUnitID = Constants.Ads.BannerUnitID
+        bannerView.rootViewController = self
+
+        let rootSize = self.view.frame.size;
+        let viewSize = bannerView.frame.size;
+
+        let rect = CGRectMake((rootSize.width - viewSize.width) / 2, rootSize.height - viewSize.height, viewSize.width, viewSize.height);
+        bannerView.frame = rect;
+
+        self.view.addSubview(bannerView)
+
+        let request = GADRequest()
+        request.testDevices = NSArray(array: [GAD_SIMULATOR_ID])
+        bannerView.loadRequest(request)
+
+        self.bannerView = bannerView
     }
 
     override func shouldAutorotate() -> Bool {

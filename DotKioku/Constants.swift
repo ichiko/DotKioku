@@ -23,4 +23,8 @@ struct Constants {
         static let SECard = "SE002_paper"
         static let Type = "wav"
     }
+
+    struct Ads {
+        static let BannerUnitID = "ca-app-pub-4449584771405934/6448256002"
+    }
 }
