@@ -36,13 +36,12 @@ class DKButton: SKNode {
         self.icon = icon
     }
 
-    convenience init(fontNamed:NSString, fontSize:CGFloat, buttonSize:CGSize? = nil) {
+    convenience init(fontSize:DKFontSize, buttonSize:CGSize? = nil) {
         self.init()
 
         self.addPanel(buttonSize)
 
-        let label = SKLabelNode(fontNamed: fontNamed)
-        label.fontSize = fontSize
+        let label = DKUtils.shared.createLabel(fontSize:fontSize)
         self.addChild(label)
         self.label = label
     }

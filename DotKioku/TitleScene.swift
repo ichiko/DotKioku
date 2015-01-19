@@ -16,12 +16,11 @@ class TitleScene: SKScene {
         let background = SKSpriteNode(texture: atlas.textureNamed("background.png"))
         background.anchorPoint = CGPointMake(0, 0)
 
-        let lbTitle = SKLabelNode(fontNamed: Constants.LabelFontName)
+        let lbTitle = DKUtils.shared.createLabel(fontSize: DKFontSize.XLarge)
         lbTitle.text = Constants.Text.AppName
-        lbTitle.fontSize = Constants.FontSizeLarge
         lbTitle.position = CGPointMake(CGRectGetMidX(view.frame), CGRectGetMidY(view.frame) + 30.0)
 
-        let btnPlay = DKButton(fontNamed: Constants.LabelFontName, fontSize: Constants.FontSizeLarge,
+        let btnPlay = DKButton(fontSize: DKFontSize.XLarge,
             buttonSize: CGSizeMake(200, 60))
         btnPlay.text = "Play"
         btnPlay.position = CGPointMake(CGRectGetMidX(view.frame), CGRectGetMidY(view.frame) - 60.0)

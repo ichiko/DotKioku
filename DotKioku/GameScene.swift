@@ -123,7 +123,7 @@ class GameScene: SKScene, DKCommandDelegate {
         if self.status == .WaitForReady {
             AudioUtils.shared.playEffect(Constants.Sound.SERankUp, type: Constants.Sound.Type)
             self.status = .PreviewStarted
-            self.readyLabel!.hidden = true
+            self.hideReadyLabel()
         } else if self.status == .GameOver {
             let skView:SKView = self.view!
 
@@ -214,13 +214,13 @@ class GameScene: SKScene, DKCommandDelegate {
             self.playerTable!.runResetAction()
         case .PlayerMissed:
             self.commandLayer!.disabled = true
-            self.setShowResultAction(self.missLabel!)
+            self.setShowResultAction(self.missLabel!, showAction: SKAction.unhide())
             self.status = .GameOver
             self.endType = .PlayerMiss
             AudioUtils.shared.playEffect(Constants.Sound.SEFail, type: Constants.Sound.Type)
         case .PlayerTimeOver:
             self.commandLayer!.disabled = true
-            self.setShowResultAction(self.timeOverLabel!)
+            self.showTimeOverLabel()
             self.status = .GameOver
             self.endType = .TimeOver
             AudioUtils.shared.playEffect(Constants.Sound.SEFail, type: Constants.Sound.Type)
@@ -269,46 +269,46 @@ class GameScene: SKScene, DKCommandDelegate {
     func addLabels() {
         let posCenter = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame) + 60)
 
-        let lbReady = SKLabelNode(fontNamed: Constants.LabelFontName)
+        let lbReady = DKUtils.shared.createLabel()
         lbReady.text = "Ready ?";
         lbReady.position = posCenter
 
-        let lbMiss = SKLabelNode(fontNamed: Constants.LabelFontName)
+        let lbMiss = DKUtils.shared.createLabel()
         lbMiss.text = "Not Collect !"
         lbMiss.position = posCenter
         lbMiss.hidden = true
         lbMiss.fontColor = SKColor.redColor()
 
-        let lbTimeOver = SKLabelNode(fontNamed: Constants.LabelFontName)
+        let lbTimeOver = DKUtils.shared.createLabel()
         lbTimeOver.text = "Time Over !"
         lbTimeOver.position = posCenter
         lbTimeOver.hidden = true
         lbTimeOver.fontColor = SKColor.redColor()
 
-        let lbSuccess = SKLabelNode(fontNamed: Constants.LabelFontName)
+        let lbSuccess = DKUtils.shared.createLabel()
         lbSuccess.text = "Success !"
         lbSuccess.position = posCenter
         lbSuccess.hidden = true
         lbSuccess.fontColor = SKColor.greenColor()
 
-        let lbStart = SKLabelNode(fontNamed: Constants.LabelFontName)
+        let lbStart = DKUtils.shared.createLabel()
         lbStart.text = "Start !"
         lbStart.position = posCenter
         lbStart.hidden = true
         lbStart.fontColor = SKColor.orangeColor()
 
-        let lbNextRound = SKLabelNode(fontNamed: Constants.LabelFontName)
+        let lbNextRound = DKUtils.shared.createLabel()
         lbNextRound.text = "Go Next Round"
         lbNextRound.position = CGPointMake(posCenter.x, posCenter.y - 40)
         lbNextRound.hidden = true
 
-        let lbTimer = SKLabelNode(fontNamed: Constants.LabelFontName)
+        let lbTimer = DKUtils.shared.createLabel()
         lbTimer.text = "0"
         lbTimer.position = CGPointMake(0, self.frame.height - 30.0)
         lbTimer.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
         lbTimer.hidden = true
 
-        let lbCardNum = SKLabelNode(fontNamed: Constants.LabelFontName)
+        let lbCardNum = DKUtils.shared.createLabel(fontSize: DKFontSize.Small)
         lbCardNum.text = "00/00"
         lbCardNum.position = CGPointMake(self.frame.width, self.frame.height - 30.0)
         lbCardNum.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Right
@@ -396,11 +396,10 @@ class GameScene: SKScene, DKCommandDelegate {
         node.runAction(seq)
     }
 
-    func setShowResultAction(node:SKNode!) {
+    func setShowResultAction(node:SKNode!, showAction:SKAction!) {
         node.hidden = true
 
         let delayAction = SKAction.waitForDuration(PlayerFailedNoticeShowDelay)
-        let showAction = SKAction.unhide()
         let waitAction = SKAction.waitForDuration(PlayerResultShowDelay)
         let resultAction = SKAction.runBlock({ () -> Void in
             self.showResult()
@@ -408,6 +407,31 @@ class GameScene: SKScene, DKCommandDelegate {
 
         let seq = SKAction.sequence([delayAction, showAction, waitAction, resultAction])
         node.runAction(seq)
+    }
+
+    func hideReadyLabel() {
+        if self.readyLabel!.hidden {
+            return
+        }
+        let fadeAction = SKAction.fadeOutWithDuration(0.5)
+        let scaleAction = SKAction.scaleTo(10.0, duration: 0.6)
+        let group = SKAction.group([fadeAction, scaleAction])
+        self.readyLabel!.runAction(group)
+    }
+    
+    func showTimeOverLabel() {
+        if !self.timeOverLabel!.hidden {
+            return
+        }
+        let pos = self.timeOverLabel!.position
+        let posFrom = CGPointMake(pos.x, pos.y + 40)
+        self.timeOverLabel!.position = posFrom
+
+        let fadeAction = SKAction.fadeInWithDuration(0.3)
+        let moveAction = SKAction.moveTo(pos, duration: 0.5)
+        let group = SKAction.group([fadeAction, moveAction])
+        
+        self.setShowResultAction(self.timeOverLabel!, showAction: group)
     }
 
     func showResult() {

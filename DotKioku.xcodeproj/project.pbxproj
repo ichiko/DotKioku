@@ -50,6 +50,7 @@
 		ECDCB4291A664F4400AC2F9E /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ECDCB4281A664F4400AC2F9E /* libz.dylib */; };
 		ECDCB42B1A6650C600AC2F9E /* GoogleAnalyticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDCB42A1A6650C600AC2F9E /* GoogleAnalyticsManager.swift */; };
 		ECDCB42E1A66552900AC2F9E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ECDCB42D1A66552900AC2F9E /* libsqlite3.dylib */; };
+		ECE773C41A6CDA0100E4317D /* mosamosa.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECE773C31A6CDA0100E4317D /* mosamosa.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -133,6 +134,7 @@
 		ECDCB4281A664F4400AC2F9E /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		ECDCB42A1A6650C600AC2F9E /* GoogleAnalyticsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleAnalyticsManager.swift; sourceTree = "<group>"; };
 		ECDCB42D1A66552900AC2F9E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		ECE773C31A6CDA0100E4317D /* mosamosa.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = mosamosa.ttf; path = Resources/mosamosa.ttf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,6 +192,7 @@
 		EC22E8511A5BECE000EBED00 /* DotKioku */ = {
 			isa = PBXGroup;
 			children = (
+				ECE773C51A6CDA0E00E4317D /* font */,
 				EC539AC81A5FBFBB002A5E96 /* sounds */,
 				ECB3358B1A5CC55E00375F73 /* assets.atlas */,
 				ECDCB3CA1A66430A00AC2F9E /* assets@2x.atlas */,
@@ -342,6 +345,14 @@
 			name = GoogleAnalytics;
 			sourceTree = "<group>";
 		};
+		ECE773C51A6CDA0E00E4317D /* font */ = {
+			isa = PBXGroup;
+			children = (
+				ECE773C31A6CDA0100E4317D /* mosamosa.ttf */,
+			);
+			name = font;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -422,6 +433,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECE773C41A6CDA0100E4317D /* mosamosa.ttf in Resources */,
 				EC22E8631A5BECE000EBED00 /* LaunchScreen.xib in Resources */,
 				EC22E8601A5BECE000EBED00 /* Images.xcassets in Resources */,
 				EC539ACE1A5FBFBB002A5E96 /* SE002_paper.wav in Resources */,

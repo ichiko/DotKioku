@@ -8,10 +8,16 @@
 
 import SpriteKit
 
-struct Constants {
-    static let LabelFontName = "Chalkduster"
+enum DKFontSize:CGFloat {
+    case
+    Small = 16,
+    Middle = 24,
+    Large = 32,
+    XLarge = 40
+}
 
-    static let FontSizeLarge:CGFloat = 42.0
+struct Constants {
+    static let LabelFontName = "mosamosa"
 
     struct Text {
         static let AppName = "DotKioku"

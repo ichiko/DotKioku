@@ -39,4 +39,11 @@ class DKUtils {
         texture.filteringMode = SKTextureFilteringMode.Nearest
         return texture
     }
+
+    func createLabel(fontSize:DKFontSize = .Middle) -> SKLabelNode {
+        let label = SKLabelNode(fontNamed: Constants.LabelFontName)
+        label.fontSize = fontSize.rawValue
+        label.fontColor = SKColor.blackColor()
+        return label
+    }
 }
