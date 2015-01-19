@@ -274,31 +274,31 @@ class GameScene: SKScene, DKCommandDelegate {
         lbReady.position = posCenter
 
         let lbMiss = DKUtils.shared.createLabel()
-        lbMiss.text = "Not Collect !"
+        lbMiss.text = "まちがい"
         lbMiss.position = posCenter
         lbMiss.hidden = true
         lbMiss.fontColor = SKColor.redColor()
 
         let lbTimeOver = DKUtils.shared.createLabel()
-        lbTimeOver.text = "Time Over !"
+        lbTimeOver.text = "タイム アップ!"
         lbTimeOver.position = posCenter
         lbTimeOver.hidden = true
         lbTimeOver.fontColor = SKColor.redColor()
 
         let lbSuccess = DKUtils.shared.createLabel()
-        lbSuccess.text = "Success !"
+        lbSuccess.text = "ばっちり!"
         lbSuccess.position = posCenter
         lbSuccess.hidden = true
         lbSuccess.fontColor = SKColor.greenColor()
 
         let lbStart = DKUtils.shared.createLabel()
-        lbStart.text = "Start !"
+        lbStart.text = "スタート!"
         lbStart.position = posCenter
         lbStart.hidden = true
         lbStart.fontColor = SKColor.orangeColor()
 
         let lbNextRound = DKUtils.shared.createLabel()
-        lbNextRound.text = "Go Next Round"
+        lbNextRound.text = "ランク アップ!"
         lbNextRound.position = CGPointMake(posCenter.x, posCenter.y - 40)
         lbNextRound.hidden = true
 

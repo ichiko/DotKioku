@@ -22,7 +22,7 @@ class TitleScene: SKScene {
 
         let btnPlay = DKButton(fontSize: DKFontSize.XLarge,
             buttonSize: CGSizeMake(200, 60))
-        btnPlay.text = "Play"
+        btnPlay.text = "はじめる"
         btnPlay.position = CGPointMake(CGRectGetMidX(view.frame), CGRectGetMidY(view.frame) - 60.0)
         btnPlay.buttonDidToucheBlock = { () -> Void in
             let skView:SKView = self.view!
