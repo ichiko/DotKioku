@@ -31,6 +31,7 @@
 		ECB335901A5D206000375F73 /* DKCommandLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB3358F1A5D205F00375F73 /* DKCommandLayer.swift */; };
 		ECB531151A5E39DF002FA5C6 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB531141A5E39DF002FA5C6 /* Constants.swift */; };
 		ECB531171A5E6FD0002FA5C6 /* DKResultLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB531161A5E6FD0002FA5C6 /* DKResultLayer.swift */; };
+		ECC14F111A6CC292008E24CE /* assets@3x.atlas in Resources */ = {isa = PBXBuildFile; fileRef = ECC14F101A6CC292008E24CE /* assets@3x.atlas */; };
 		ECDCB3C91A6635EE00AC2F9E /* TitleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDCB3C81A6635EE00AC2F9E /* TitleScene.swift */; };
 		ECDCB3CB1A66430A00AC2F9E /* assets@2x.atlas in Resources */ = {isa = PBXBuildFile; fileRef = ECDCB3CA1A66430A00AC2F9E /* assets@2x.atlas */; };
 		ECDCB3FE1A6646B300AC2F9E /* libGoogleAdMobAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ECDCB3FC1A6646B300AC2F9E /* libGoogleAdMobAds.a */; };
@@ -90,6 +91,7 @@
 		ECB3358F1A5D205F00375F73 /* DKCommandLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DKCommandLayer.swift; sourceTree = "<group>"; };
 		ECB531141A5E39DF002FA5C6 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		ECB531161A5E6FD0002FA5C6 /* DKResultLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DKResultLayer.swift; sourceTree = "<group>"; };
+		ECC14F101A6CC292008E24CE /* assets@3x.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = "assets@3x.atlas"; sourceTree = "<group>"; };
 		ECDCB3C81A6635EE00AC2F9E /* TitleScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleScene.swift; sourceTree = "<group>"; };
 		ECDCB3CA1A66430A00AC2F9E /* assets@2x.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = "assets@2x.atlas"; sourceTree = "<group>"; };
 		ECDCB3F01A6646B300AC2F9E /* GADAdMobExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADAdMobExtras.h; sourceTree = "<group>"; };
@@ -191,6 +193,7 @@
 				EC539AC81A5FBFBB002A5E96 /* sounds */,
 				ECB3358B1A5CC55E00375F73 /* assets.atlas */,
 				ECDCB3CA1A66430A00AC2F9E /* assets@2x.atlas */,
+				ECC14F101A6CC292008E24CE /* assets@3x.atlas */,
 				ECDCB4151A66485B00AC2F9E /* objc-header.h */,
 				EC22E8541A5BECE000EBED00 /* AppDelegate.swift */,
 				ECB531141A5E39DF002FA5C6 /* Constants.swift */,
@@ -423,6 +426,7 @@
 				EC22E8601A5BECE000EBED00 /* Images.xcassets in Resources */,
 				EC539ACE1A5FBFBB002A5E96 /* SE002_paper.wav in Resources */,
 				ECB3358C1A5CC55E00375F73 /* assets.atlas in Resources */,
+				ECC14F111A6CC292008E24CE /* assets@3x.atlas in Resources */,
 				EC539ACD1A5FBFBB002A5E96 /* SE001_Rankup.wav in Resources */,
 				EC22E85E1A5BECE000EBED00 /* Main.storyboard in Resources */,
 				EC539ACC1A5FBFBB002A5E96 /* SE001_Fail.wav in Resources */,
