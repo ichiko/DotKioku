@@ -80,7 +80,11 @@ class GameEngine {
     }
 
     func nextRound() {
-        self.currentGame!.add(self.cardPool!.select())
+        let max = self.currentGame!.count + 1
+        self.currentGame!.clear()
+        for i in 1...max {
+            self.currentGame!.add(self.cardPool!.select())
+        }
         self.currentGame!.reset()
     }
 }

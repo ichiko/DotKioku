@@ -25,6 +25,10 @@ class RemembranceArray {
     func reset() {
         self.index = 0
     }
+    
+    func clear() {
+        self.cards.removeAll(keepCapacity: true)
+    }
 
     func hasNext() -> Bool {
         return (self.index < self.cards.count)
