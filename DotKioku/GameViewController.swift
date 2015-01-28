@@ -39,24 +39,6 @@ class GameViewController: UIViewController {
         scene.scaleMode = .AspectFill
 
         skView.presentScene(scene)
-
-        let bannerView = GADBannerView(adSize:kGADAdSizeBanner)
-        bannerView.adUnitID = Constants.Ads.BannerUnitID
-        bannerView.rootViewController = self
-
-        let rootSize = self.view.frame.size;
-        let viewSize = bannerView.frame.size;
-
-        let rect = CGRectMake((rootSize.width - viewSize.width) / 2, rootSize.height - viewSize.height, viewSize.width, viewSize.height);
-        bannerView.frame = rect;
-
-        self.view.addSubview(bannerView)
-
-        let request = GADRequest()
-        request.testDevices = NSArray(array: [GAD_SIMULATOR_ID, "f7e98f6075a6c86592843e4001dd4537"])
-        bannerView.loadRequest(request)
-
-        self.bannerView = bannerView
     }
 
     override func shouldAutorotate() -> Bool {
@@ -78,5 +60,41 @@ class GameViewController: UIViewController {
 
     override func prefersStatusBarHidden() -> Bool {
         return true
+    }
+
+    func showAdsView() {
+        if self.bannerView == nil {
+            let bannerView = GADBannerView(adSize:kGADAdSizeBanner)
+            bannerView.adUnitID = Constants.Ads.BannerUnitID
+            bannerView.rootViewController = self
+
+            let rootSize = self.view.frame.size;
+            let viewSize = bannerView.frame.size;
+
+            let rect = CGRectMake((rootSize.width - viewSize.width) / 2, rootSize.height - viewSize.height, viewSize.width, viewSize.height);
+            bannerView.frame = rect;
+
+            self.view.addSubview(bannerView)
+
+            self.bannerView = bannerView
+        }
+
+        if let bannerView = self.bannerView {
+            if bannerView.hidden {
+                bannerView.hidden = false
+            }
+
+            let request = GADRequest()
+            request.testDevices = NSArray(array: [GAD_SIMULATOR_ID, "f7e98f6075a6c86592843e4001dd4537"])
+            bannerView.loadRequest(request)
+        }
+    }
+
+    func hideAdsView() {
+        if let bannerView = self.bannerView {
+            if !bannerView.hidden {
+                bannerView.hidden = true
+            }
+        }
     }
 }
