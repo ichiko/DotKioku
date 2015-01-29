@@ -9,11 +9,11 @@
 import Foundation
 
 class CardSet {
-    var correct:[Card]
+    var answer:[Card]
     var size:Int
 
     init(size:Int, pool:CardPool) {
-        self.correct = [Card]()
+        self.answer = [Card]()
         self.size = size
 
         self.randomCorrect(pool)
@@ -21,12 +21,12 @@ class CardSet {
 
     private func randomCorrect(pool:CardPool) {
         for i in 1...self.size {
-            self.correct.append(pool.select())
+            self.answer.append(pool.select())
         }
     }
 
     func shuffle() -> [Card] {
-        var result = [Card](self.correct)
+        var result = [Card](self.answer)
         for var i:UInt32 = UInt32(result.count); i > 1; i-- {
             let a:Int = i - 1
             let b:Int = Int(arc4random() % i)
@@ -37,12 +37,11 @@ class CardSet {
         return result
     }
 
-    func check(array:[Card]) -> Bool {
-        for var i = 0; i < correct.count; i++ {
-            if correct[i] !== array[i] {
-                return false
-            }
+    func check(array:[Card]) -> [Bool] {
+        var result = [Bool]()
+        for var i = 0; i < answer.count; i++ {
+            result.append(answer[i].match(array[i].typeId))
         }
-        return true
+        return result
     }
 }

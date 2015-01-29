@@ -41,7 +41,7 @@ class DKButton: SKNode {
 
         self.addPanel(buttonSize)
 
-        let label = DKUtils.shared.createLabel(fontSize:fontSize)
+        let label = DKUtils.createLabel(fontSize:fontSize)
         self.addChild(label)
         self.label = label
     }

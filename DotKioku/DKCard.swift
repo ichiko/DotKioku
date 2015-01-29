@@ -8,8 +8,8 @@
 
 import SpriteKit
 
-let kDKCardWidth:CGFloat = 120
-let kDKCardHeight:CGFloat = 150
+let kDKCardWidth:CGFloat = 60
+let kDKCardHeight:CGFloat = 86
 
 class DKCard: SKNode {
     var cardInfo: Card
@@ -57,7 +57,7 @@ class DKCard: SKNode {
             self.icon = nil
         }
 
-        let texture = DKUtils.shared.texture(fromTypeId: self.cardInfo.typeId)
+        let texture = DKUtils.texture(fromTypeId: self.cardInfo.typeId)
         let icon = SKSpriteNode(texture: texture)
 
         self.addChild(icon)

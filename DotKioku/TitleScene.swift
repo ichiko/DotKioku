@@ -16,7 +16,7 @@ class TitleScene: SKScene {
         let background = SKSpriteNode(texture: atlas.textureNamed("background.png"))
         background.anchorPoint = CGPointMake(0, 0)
 
-        let lbTitle = DKUtils.shared.createLabel(fontSize: DKFontSize.XLarge)
+        let lbTitle = DKUtils.createLabel(fontSize: DKFontSize.XLarge)
         lbTitle.text = Constants.Text.AppName
         lbTitle.position = CGPointMake(CGRectGetMidX(view.frame), CGRectGetMidY(view.frame) + 30.0)
 

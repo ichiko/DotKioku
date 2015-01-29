@@ -9,20 +9,14 @@
 import SpriteKit
 
 class DKUtils {
-    private var atlas:SKTextureAtlas
-
-    init() {
-        self.atlas = SKTextureAtlas(named:"assets")
-    }
-
-    class var shared: DKUtils {
+    private class var atlas:SKTextureAtlas {
         struct Singleton {
-            static let instance = DKUtils()
+            static let atlas = SKTextureAtlas(named:"assets")
         }
-        return Singleton.instance
+        return Singleton.atlas
     }
 
-    func texture(fromTypeId typeId:Int) -> SKTexture {
+    class func texture(fromTypeId typeId:Int) -> SKTexture {
         var textureName:String
         switch typeId {
         case 0:
@@ -40,7 +34,7 @@ class DKUtils {
         return texture
     }
 
-    func createLabel(fontSize:DKFontSize = .Middle) -> SKLabelNode {
+    class func createLabel(fontSize:DKFontSize = .Middle) -> SKLabelNode {
         let label = SKLabelNode(fontNamed: Constants.LabelFontName)
         label.fontSize = fontSize.rawValue
         label.fontColor = SKColor.blackColor()

@@ -8,22 +8,20 @@
 
 import Foundation
 
-class CardPool {
-    var pool: [Int]
+public class CardPool {
+    private var pool: [Int]
     var name: String
 
     init(setId:Int, name:String) {
         self.pool = [Int]()
         self.name = name
-        self.initWithSet(setId)
+        self.load(setId)
     }
 
-    func initWithSet(setId:Int) {
+    func load(setId:Int) {
+        self.pool.removeAll(keepCapacity: false)
         self.pool.append(0)
-        self.pool.append(1)
-        self.pool.append(2)
-        self.pool.append(3)
-    }
+        self.pool.append(1)    }
 
     func select() -> Card {
         let index = arc4random() % UInt32(self.pool.count)

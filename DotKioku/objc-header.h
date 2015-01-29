@@ -9,11 +9,11 @@
 #ifndef DotKioku_objc_header_h
 #define DotKioku_objc_header_h
 
-#import "GADBannerView.h"
+#import "../DotKioku/lib/GoogleMobileAds/GADBannerView.h"
 
-#import "GAI.h"
-#import "GAIDictionaryBuilder.h"
-#import "GAIFields.h"
-#import "GAILogger.h"
+#import "../DotKioku/lib/GoogleAnalytics/Library/GAI.h"
+#import "../DotKioku/lib/GoogleAnalytics/Library/GAIDictionaryBuilder.h"
+#import "../DotKioku/lib/GoogleAnalytics/Library/GAIFields.h"
+#import "../DotKioku/lib/GoogleAnalytics/Library/GAILogger.h"
 
 #endif

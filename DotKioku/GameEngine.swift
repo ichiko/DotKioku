@@ -8,83 +8,57 @@
 
 import Foundation
 
-let InitialSize = 3
-
 class GameEngine {
-    private var cardPool: CardPool?
-    private var currentGame: RemembranceArray?
+    private var _currentGame: CardSet?
+    private var _playTimeMax:CFTimeInterval
+    private var _score:Int
 
     init() {
+        _playTimeMax = 0
+        _score = 0
     }
 
-    var info:CardPool {
-        get {
-            return self.cardPool!
-        }
+    var currentGame:CardSet? {
+        get { return _currentGame }
+    }
+
+    var playTimeMax:CFTimeInterval {
+        get { return _playTimeMax }
     }
 
     var score:Int {
-        get {
-            if self.hasNext() {
-                return self.cardCount - 1
-            } else {
-                return self.cardCount
-            }
+        get { return _score }
+    }
+
+    func newGame(stageId:Int) {
+        let setId = 1
+        let size = 6
+
+        let pool = createPool(setId)
+        let game = CardSet(size: size, pool: pool)
+
+        self._currentGame = game
+        self._playTimeMax = 50.0
+    }
+
+    // ラウンド終了の場、true
+    func checkRoundFinish(cards:[Card]) -> Bool {
+        let result = self.currentGame?.check(cards)
+        if result?.filter({ !$0 }).count > 0 {
+            return false
         }
+        return true
     }
 
-    var cardCount:Int {
-        get {
-            return self.currentGame!.count
-        }
-    }
-
-    var answer:Card {
-        get {
-            return self.currentGame!.getCurrent()
-        }
-    }
-
-    func newGame() {
-        self.cardPool = CardPool(setId: 0, name: "Sage Name")
-        self.currentGame = RemembranceArray()
-
-        for var i = 0; i < InitialSize; i++ {
-            self.currentGame!.add(self.cardPool!.select())
-        }
-    }
-
-    func startPreview() {
-        self.currentGame!.reset()
-    }
-
-    func startInput() {
-        self.currentGame!.reset()
-    }
-
-    func hasNext() -> Bool {
-        return self.currentGame!.hasNext()
-    }
-
-    func next() -> Card {
-        return self.currentGame!.next()
-    }
-
-    func checkInput(typeId:Int) -> Bool {
-        let card = self.currentGame!.getCurrent()
-        return card.match(typeId)
-    }
-
-    func getCardByTypeId(typeId:Int) -> Card? {
-        return self.cardPool!.getById(typeId)
+    func finishGameRound() {
+        // TODO スコアの更新
     }
 
     func nextRound() {
-        let max = self.currentGame!.count + 1
-        self.currentGame!.clear()
-        for i in 1...max {
-            self.currentGame!.add(self.cardPool!.select())
-        }
-        self.currentGame!.reset()
+    }
+
+    private func createPool(setId:Int) -> CardPool {
+        let pool = CardPool(setId: 1, name: "どうくつ")
+        return pool
     }
 }
