@@ -8,8 +8,8 @@
 
 import SpriteKit
 
-private let CARD_MARGIN_VERTICAL:CGFloat = 60
-private let CARD_MARGIN_HORIZONTAL:CGFloat = 20
+private let CARD_MARGIN_VERTICAL:CGFloat = 10
+private let CARD_MARGIN_HORIZONTAL:CGFloat = 10
 
 private let CARD_SELECTED_DIFF_X:CGFloat = -5
 private let CARD_SELECTED_DIFF_Y:CGFloat = 5
@@ -48,16 +48,19 @@ class DKCardTable : SKNode {
                 let location = first.position
                 first.position = second.position
                 second.position = CGPointMake(location.x - CARD_SELECTED_DIFF_X, location.y - CARD_SELECTED_DIFF_Y)
-                self.cardViews[firstIndex] = second
-                self.cardViews[secondIndex] = first
-                self.selectedIndex = nil
 
-                let cards = self.cardViews.map({ $0.cardInfo })
-                if self.engine!.checkRoundFinish(cards) {
-                    if let target = self.delegate {
-                        target.allCardsMatched()
+                if firstIndex != secondIndex {
+                    self.cardViews[firstIndex] = second
+                    self.cardViews[secondIndex] = first
+
+                    let cards = self.cardViews.map({ $0.cardInfo })
+                    if self.engine!.checkRoundFinish(cards) {
+                        if let target = self.delegate {
+                            target.allCardsMatched()
+                        }
                     }
                 }
+                self.selectedIndex = nil
             } else {
                 let selected = touchedCard[0]
                 self.selectedIndex = find(self.cardViews, selected)
@@ -69,16 +72,18 @@ class DKCardTable : SKNode {
     }
 
     func enableInteraction() {
+        NSLog("enableInteraction")
         self.userInteractionEnabled = true
         self.selectedIndex = nil
     }
 
     func disableInteraction() {
+        NSLog("disableInteraction")
         self.userInteractionEnabled = false
     }
 
     func displayCards(cards:[Card]) {
-        displayCards(cards, cols: 3)
+        displayCards(cards, cols: 2)
     }
 
     private func displayCards(cards:[Card], cols:Int) {
@@ -87,8 +92,8 @@ class DKCardTable : SKNode {
         let len = cards.count
         let rows = len / cols
 
-        let colWidth = (frame.width - CARD_MARGIN_HORIZONTAL * 2) / CGFloat(cols)
-        let rowHeight = (frame.height - CARD_MARGIN_VERTICAL * 2) / CGFloat(rows)
+        let left = (frame.width - (kDKCardWidth * CGFloat(cols) + CGFloat(cols - 1) * CARD_MARGIN_HORIZONTAL)) / 2
+        let bottom = (frame.height - (kDKCardHeight * CGFloat(rows) + CGFloat(rows - 1) * CARD_MARGIN_VERTICAL)) / 2
 
         for var i = 0; i < len; i++ {
             let dat = cards[i]
@@ -97,8 +102,8 @@ class DKCardTable : SKNode {
             let row:Int = i / cols
 
             card.position = CGPointMake(
-                CARD_MARGIN_HORIZONTAL + colWidth * (CGFloat(col) + 0.5),
-                CARD_MARGIN_VERTICAL + rowHeight * (CGFloat(row) + 0.5))
+                left + (CGFloat(col) + 0.5) * kDKCardWidth + CGFloat(col) * CARD_MARGIN_HORIZONTAL,
+                bottom + (CGFloat(row) + 0.5) * kDKCardHeight + CGFloat(row) * CARD_MARGIN_VERTICAL)
             self.addChild(card)
             self.cardViews.append(card)
         }
