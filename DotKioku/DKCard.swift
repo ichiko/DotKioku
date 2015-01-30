@@ -53,14 +53,16 @@ class DKCard: SKNode {
 
     func updateIcon() {
         if let prev = self.icon {
-            self.removeChildrenInArray(NSArray(array: [prev]))
+            prev.removeFromParent()
             self.icon = nil
         }
 
-        let texture = DKUtils.texture(fromTypeId: self.cardInfo.typeId)
-        let icon = SKSpriteNode(texture: texture)
+        if self.cardInfo.typeId > 0 {
+            let texture = DKUtils.texture(fromTypeId: self.cardInfo.typeId)
+            let icon = SKSpriteNode(texture: texture)
 
-        self.addChild(icon)
-        self.icon = icon
+            self.addChild(icon)
+            self.icon = icon
+        }
     }
 }
