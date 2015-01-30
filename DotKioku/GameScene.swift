@@ -34,7 +34,7 @@ enum GameStatus : String {
     MatchAllDelay = "MatchAllDelay",            // wait MATCH_ALL_DELAY_TIME
     PrepareNextRound = "PrepareNextRound",      // action
     ShowResult = "ShowResult",                  // action
-    WaitToReplay = "WaitToReplay"
+    GameFinished = "GameFinished"
 }
 
 class GameScene: SKScene, DKCardTableDelegate {
@@ -100,9 +100,11 @@ class GameScene: SKScene, DKCardTableDelegate {
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         if status == .WaitToStart {
             status = .ShowAnswer
-        } else if status == .WaitToRetry {
-            // TODO hide all
-            status = .ReStart
+        } else if status == .WaitToRetry || status == .GameFinished {
+            let skView:SKView = self.view!
+            let scene = GameScene(size: skView.bounds.size)
+            scene.scaleMode = .AspectFill
+            skView.presentScene(scene)
         }
     }
 
@@ -121,6 +123,7 @@ class GameScene: SKScene, DKCardTableDelegate {
         } else if status == .ReStart {
             status = .ReStartDelay
             savedTime = currentTime
+            self.answerTable?.removeCards()
             self.playerTable?.removeCards()
             self.barNode?.reset()
         } else if status == .ReStartDelay {
@@ -136,7 +139,6 @@ class GameScene: SKScene, DKCardTableDelegate {
             self.engine.nextRound()
 
             let cards = self.engine.currentRound!.answer
-            self.answerTable?.removeCards()
             self.answerTable?.displayCards(cards)
         } else if status == .ShowAnswerDuration {
             if diffTime >= ANSWER_DURATION_TIME {
@@ -181,7 +183,7 @@ class GameScene: SKScene, DKCardTableDelegate {
             self.updateLevelInfo()
             self.labelMatchAll?.hidden = true
         } else if status == .ShowResult {
-            status = .WaitToReplay
+            status = .GameFinished
         }
     }
 
