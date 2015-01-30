@@ -13,7 +13,8 @@ enum DKFontSize:CGFloat {
     Small = 16,
     Middle = 24,
     Large = 32,
-    XLarge = 40
+    XLarge = 40,
+    XXLarge = 86
 }
 
 struct Constants {

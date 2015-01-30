@@ -83,7 +83,7 @@ class DKCardTable : SKNode {
     }
 
     func displayCards(cards:[Card]) {
-        displayCards(cards, cols: 2)
+        displayCards(cards, cols: 4)
     }
 
     private func displayCards(cards:[Card], cols:Int) {

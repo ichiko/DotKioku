@@ -23,12 +23,14 @@
 		EC539ACC1A5FBFBB002A5E96 /* SE001_Fail.wav in Resources */ = {isa = PBXBuildFile; fileRef = EC539AC91A5FBFBB002A5E96 /* SE001_Fail.wav */; };
 		EC539ACD1A5FBFBB002A5E96 /* SE001_Rankup.wav in Resources */ = {isa = PBXBuildFile; fileRef = EC539ACA1A5FBFBB002A5E96 /* SE001_Rankup.wav */; };
 		EC539ACE1A5FBFBB002A5E96 /* SE002_paper.wav in Resources */ = {isa = PBXBuildFile; fileRef = EC539ACB1A5FBFBB002A5E96 /* SE002_paper.wav */; };
+		ECB12ED71A7B170F00976BBE /* DKTimeBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB12ED61A7B170F00976BBE /* DKTimeBar.swift */; };
 		ECB19B461A5F7405007470A2 /* DKUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB19B451A5F7405007470A2 /* DKUtils.swift */; };
 		ECB3358A1A5CB2CA00375F73 /* DKCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB335891A5CB2CA00375F73 /* DKCard.swift */; };
 		ECB3358C1A5CC55E00375F73 /* assets.atlas in Resources */ = {isa = PBXBuildFile; fileRef = ECB3358B1A5CC55E00375F73 /* assets.atlas */; };
 		ECB3358E1A5CC79500375F73 /* DKButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB3358D1A5CC79500375F73 /* DKButton.swift */; };
 		ECB531151A5E39DF002FA5C6 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB531141A5E39DF002FA5C6 /* Constants.swift */; };
 		ECB531171A5E6FD0002FA5C6 /* DKResultLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB531161A5E6FD0002FA5C6 /* DKResultLayer.swift */; };
+		ECB9046D1A79F11200029CD3 /* StageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB9046C1A79F11200029CD3 /* StageInfo.swift */; };
 		ECC14F111A6CC292008E24CE /* assets@3x.atlas in Resources */ = {isa = PBXBuildFile; fileRef = ECC14F101A6CC292008E24CE /* assets@3x.atlas */; };
 		ECDCB3C91A6635EE00AC2F9E /* TitleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDCB3C81A6635EE00AC2F9E /* TitleScene.swift */; };
 		ECDCB3CB1A66430A00AC2F9E /* assets@2x.atlas in Resources */ = {isa = PBXBuildFile; fileRef = ECDCB3CA1A66430A00AC2F9E /* assets@2x.atlas */; };
@@ -82,12 +84,14 @@
 		EC539AC91A5FBFBB002A5E96 /* SE001_Fail.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = SE001_Fail.wav; sourceTree = "<group>"; };
 		EC539ACA1A5FBFBB002A5E96 /* SE001_Rankup.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = SE001_Rankup.wav; sourceTree = "<group>"; };
 		EC539ACB1A5FBFBB002A5E96 /* SE002_paper.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = SE002_paper.wav; sourceTree = "<group>"; };
+		ECB12ED61A7B170F00976BBE /* DKTimeBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DKTimeBar.swift; sourceTree = "<group>"; };
 		ECB19B451A5F7405007470A2 /* DKUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DKUtils.swift; sourceTree = "<group>"; };
 		ECB335891A5CB2CA00375F73 /* DKCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DKCard.swift; sourceTree = "<group>"; };
 		ECB3358B1A5CC55E00375F73 /* assets.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = assets.atlas; sourceTree = "<group>"; };
 		ECB3358D1A5CC79500375F73 /* DKButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DKButton.swift; sourceTree = "<group>"; };
 		ECB531141A5E39DF002FA5C6 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		ECB531161A5E6FD0002FA5C6 /* DKResultLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DKResultLayer.swift; sourceTree = "<group>"; };
+		ECB9046C1A79F11200029CD3 /* StageInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StageInfo.swift; sourceTree = "<group>"; };
 		ECC14F101A6CC292008E24CE /* assets@3x.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = "assets@3x.atlas"; sourceTree = "<group>"; };
 		ECDCB3C81A6635EE00AC2F9E /* TitleScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleScene.swift; sourceTree = "<group>"; };
 		ECDCB3CA1A66430A00AC2F9E /* assets@2x.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = "assets@2x.atlas"; sourceTree = "<group>"; };
@@ -191,6 +195,7 @@
 				ECB3358D1A5CC79500375F73 /* DKButton.swift */,
 				ECB531161A5E6FD0002FA5C6 /* DKResultLayer.swift */,
 				EC0CC5C91A78B3FB00BD62B3 /* DKCardTable.swift */,
+				ECB12ED61A7B170F00976BBE /* DKTimeBar.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -271,6 +276,7 @@
 				EC22E8791A5BF50800EBED00 /* Card.swift */,
 				EC22E87F1A5BFA4D00EBED00 /* CardPool.swift */,
 				EC0CC5C41A78A68100BD62B3 /* CardSet.swift */,
+				ECB9046C1A79F11200029CD3 /* StageInfo.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -482,10 +488,12 @@
 				ECB531171A5E6FD0002FA5C6 /* DKResultLayer.swift in Sources */,
 				ECB531151A5E39DF002FA5C6 /* Constants.swift in Sources */,
 				ECB3358A1A5CB2CA00375F73 /* DKCard.swift in Sources */,
+				ECB9046D1A79F11200029CD3 /* StageInfo.swift in Sources */,
 				EC22E8591A5BECE000EBED00 /* GameScene.swift in Sources */,
 				EC22E87E1A5BF94C00EBED00 /* GameEngine.swift in Sources */,
 				ECB19B461A5F7405007470A2 /* DKUtils.swift in Sources */,
 				EC22E8801A5BFA4D00EBED00 /* CardPool.swift in Sources */,
+				ECB12ED71A7B170F00976BBE /* DKTimeBar.swift in Sources */,
 				EC22E85B1A5BECE000EBED00 /* GameViewController.swift in Sources */,
 				ECB3358E1A5CC79500375F73 /* DKButton.swift in Sources */,
 				EC22E8551A5BECE000EBED00 /* AppDelegate.swift in Sources */,

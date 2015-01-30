@@ -9,7 +9,8 @@
 import Foundation
 
 class GameEngine {
-    private var _currentGame: CardSet?
+    private var _currentStage:StageInfo?
+    private var _currentRound:CardSet?
     private var _playTimeMax:CFTimeInterval
     private var _score:Int
 
@@ -18,8 +19,8 @@ class GameEngine {
         _score = 0
     }
 
-    var currentGame:CardSet? {
-        get { return _currentGame }
+    var currentRound:CardSet? {
+        get { return _currentRound }
     }
 
     var playTimeMax:CFTimeInterval {
@@ -31,34 +32,34 @@ class GameEngine {
     }
 
     func newGame(stageId:Int) {
-        let setId = 1
-        let size = 6
+        _currentStage = StageInfo.load()
+    }
 
-        let pool = createPool(setId)
-        let game = CardSet(size: size, pool: pool)
+    func hasNextRound() -> Bool {
+        return _currentStage!.hasNextRound()
+    }
 
-        self._currentGame = game
-        self._playTimeMax = 50.0
+    func nextRound() {
+        if hasNextRound() {
+            let roundInfo = _currentStage!.nextRound()!
+            _currentRound = CardSet(roundInfo: roundInfo)
+            self._playTimeMax = roundInfo.maxTime
+        }
     }
 
     // ラウンド終了の場、true
     func checkRoundFinish(cards:[Card]) -> Bool {
-        let result = self.currentGame?.check(cards)
+        let result = self.currentRound?.check(cards)
         if result?.filter({ !$0 }).count > 0 {
             return false
         }
         return true
     }
 
-    func finishGameRound() {
+    func finishRound() {
         // TODO スコアの更新
     }
 
-    func nextRound() {
-    }
-
-    private func createPool(setId:Int) -> CardPool {
-        let pool = CardPool(setId: 1, name: "どうくつ")
-        return pool
+    func finishGame() {
     }
 }
