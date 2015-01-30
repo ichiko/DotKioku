@@ -14,6 +14,15 @@ private let CARD_MARGIN_HORIZONTAL:CGFloat = 10
 private let CARD_SELECTED_DIFF_X:CGFloat = -5
 private let CARD_SELECTED_DIFF_Y:CGFloat = 5
 
+private let COVER_POSITION_DIFF_X:CGFloat = 5
+private let COVER_POSITION_DIFF_Y:CGFloat = 10
+
+private let CARD_FADE_OUT_DURATION:CFTimeInterval = 0.5
+
+private let COVER_FADE_DURATION:CFTimeInterval = 0.5
+private let COVER_MOVE_DURATION:CFTimeInterval = 0.7
+private let COVER_ACTION_DELAY:CFTimeInterval = 0.1
+
 protocol DKCardTableDelegate {
     func allCardsMatched()
 }
@@ -21,14 +30,20 @@ protocol DKCardTableDelegate {
 class DKCardTable : SKNode {
     private var engine:GameEngine?
     private var cardViews:[DKCard]
+    private var coverViews:[SKSpriteNode]
     private var selectedIndex:Int?
     var delegate:DKCardTableDelegate?
 
-    init(engine:GameEngine) {
+    init(size:CGSize, engine:GameEngine) {
         self.engine = engine
         self.cardViews = [DKCard]()
+        self.coverViews = [SKSpriteNode]()
 
         super.init()
+
+        let node = SKSpriteNode(color: SKColor(white: 1.0, alpha: 1.0), size: size)
+        self.addChild(node)
+        node.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -86,9 +101,81 @@ class DKCardTable : SKNode {
         displayCards(cards, cols: 4)
     }
 
+    func removeCards() {
+        for card in self.cardViews {
+            card.removeFromParent()
+        }
+        self.cardViews.removeAll()
+        for cover in self.coverViews {
+            cover.removeFromParent()
+        }
+        self.coverViews.removeAll()
+    }
+
+    func coverCards() {
+        coverCards(true)
+    }
+
+    func coverCards(sequence:Bool) {
+        let len = self.cardViews.count
+        for var i = 0; i < len; i++ {
+            let card = self.cardViews[i]
+
+            let cover = SKSpriteNode(color: SKColor.brownColor(), size: CGSizeMake(kDKCardWidth, kDKCardHeight))
+            let location = card.position
+            cover.position = CGPointMake(location.x + COVER_POSITION_DIFF_X, location.y + COVER_POSITION_DIFF_Y)
+            cover.hidden = true
+            self.addChild(cover)
+            self.coverViews.append(cover)
+
+            let unhide = SKAction.unhide()
+            let fadeIn = SKAction.fadeInWithDuration(COVER_FADE_DURATION)
+            let moveTo = SKAction.moveTo(location, duration: COVER_MOVE_DURATION)
+            var action:SKAction
+            if !sequence {
+                action = SKAction.group([unhide, fadeIn, moveTo])
+            } else {
+                let delay = SKAction.waitForDuration(CFTimeInterval(len - i) * COVER_ACTION_DELAY)
+                action = SKAction.sequence([delay, SKAction.group([unhide, fadeIn, moveTo])])
+            }
+            cover.runAction(action)
+        }
+    }
+
+    func openCards() {
+        openCards(true)
+    }
+
+    func openCards(sequence:Bool) {
+        let len = self.coverViews.count
+        for var i = 0; i < len; i++ {
+            let cover = self.coverViews[i]
+            let fadeOut = SKAction.fadeOutWithDuration(COVER_FADE_DURATION)
+            let moveBy = SKAction.moveBy(CGVectorMake(COVER_POSITION_DIFF_X, COVER_POSITION_DIFF_Y), duration: COVER_MOVE_DURATION)
+            var action:SKAction
+            if !sequence {
+                action = SKAction.group([fadeOut, moveBy])
+            } else {
+                let delay = SKAction.waitForDuration(CFTimeInterval(len - i) * COVER_ACTION_DELAY)
+                action = SKAction.group([delay, fadeOut, moveBy])
+            }
+            cover.runAction(action)
+        }
+    }
+
+    func fadeOutCards() {
+        for card in self.cardViews {
+            let fadeOut = SKAction.fadeOutWithDuration(CARD_FADE_OUT_DURATION)
+            let remove = SKAction.runBlock({ () -> Void in
+                card.removeFromParent()
+            })
+            card.runAction(SKAction.sequence([fadeOut, remove]))
+        }
+    }
+
     private func displayCards(cards:[Card], cols:Int) {
         self.cardViews.removeAll(keepCapacity: false)
-        let frame = self.scene!.frame
+        let frame = self.frame
         let len = cards.count
         let rows = len / cols
 
