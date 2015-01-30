@@ -19,11 +19,11 @@ class DKUtils {
     class func texture(fromTypeId typeId:Int) -> SKTexture {
         var textureName:String
         switch typeId {
-        case 0:
-            textureName = "flower.png"
         case 1:
-            textureName = "bottle.png"
+            textureName = "flower.png"
         case 2:
+            textureName = "bottle.png"
+        case 3:
             textureName = "bat.png"
         default:
             textureName = "kinoko.png"

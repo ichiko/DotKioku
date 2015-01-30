@@ -14,6 +14,8 @@ private let ANSWER_DURATION_TIME = 1.2
 private let START_PLAYER_TURN_DELAY_TIME = 0.3
 private let MATCH_ALL_DELAY_TIME = 0.8
 
+private let CARD_TABLE_HEIGHT:CGFloat = 200
+
 enum GameStatus : String {
     case
     SceneStarted = "SceneStarted",              // initial State
@@ -43,7 +45,8 @@ class GameScene: SKScene, DKCardTableDelegate {
 
     private var engine:GameEngine = GameEngine()
 
-    private var cardTable:DKCardTable?
+    private var answerTable:DKCardTable?
+    private var playerTable:DKCardTable?
     private var barNode:DKTimeBar?
 
     private var labelScroe:SKLabelNode?
@@ -72,10 +75,17 @@ class GameScene: SKScene, DKCardTableDelegate {
         background.anchorPoint = CGPointMake(0, 0)
         self.addChild(background)
 
-        let table = DKCardTable(engine: self.engine)
-        table.delegate = self
-        self.addChild(table)
-        self.cardTable = table
+        let tableSize = CGSizeMake(view.frame.width, CARD_TABLE_HEIGHT)
+        let tblAnswer = DKCardTable(size:tableSize, engine: self.engine)
+        tblAnswer.position = CGPointMake(CGRectGetMidX(view.frame), tableSize.height * 1.5)
+        let tblPlayer = DKCardTable(size:tableSize, engine: self.engine)
+        tblPlayer.position = CGPointMake(CGRectGetMidX(view.frame), tableSize.height / 2)
+        tblPlayer.delegate = self
+        self.addChild(tblAnswer)
+        self.addChild(tblPlayer)
+
+        self.answerTable = tblAnswer
+        self.playerTable = tblPlayer
 
         let bar = DKTimeBar(width: self.frame.width)
         bar.position = CGPointMake(0, self.frame.height - 60)
@@ -111,7 +121,7 @@ class GameScene: SKScene, DKCardTableDelegate {
         } else if status == .ReStart {
             status = .ReStartDelay
             savedTime = currentTime
-            self.cardTable?.removeAllChildren()
+            self.playerTable?.removeCards()
             self.barNode?.reset()
         } else if status == .ReStartDelay {
             if diffTime >= RESTART_DELAY_TIME {
@@ -126,11 +136,11 @@ class GameScene: SKScene, DKCardTableDelegate {
             self.engine.nextRound()
 
             let cards = self.engine.currentRound!.answer
-            self.cardTable?.removeAllChildren()
-            self.cardTable?.displayCards(cards)
+            self.answerTable?.removeCards()
+            self.answerTable?.displayCards(cards)
         } else if status == .ShowAnswerDuration {
             if diffTime >= ANSWER_DURATION_TIME {
-                self.cardTable?.removeAllChildren()
+                self.answerTable?.coverCards()
                 status = .StartPlayerTurnDelay
                 savedTime = currentTime
             }
@@ -143,15 +153,16 @@ class GameScene: SKScene, DKCardTableDelegate {
             savedTime = currentTime
 
             let shuffled = self.engine.currentRound!.shuffle()
-            self.cardTable?.displayCards(shuffled)
-            self.cardTable?.enableInteraction()
+            self.playerTable?.displayCards(shuffled)
+            self.playerTable?.enableInteraction()
         } else if status == .PlayingTime {
             let maxTime = self.engine.playTimeMax
             self.barNode?.update(maxTime - diffTime, maxTime: maxTime)
             if diffTime >= maxTime {
                 // TODO Time Over
                 status = .TimeIsUp
-                self.cardTable?.disableInteraction()
+                self.answerTable?.openCards()
+                self.playerTable?.disableInteraction()
             }
         } else if status == .TimeIsUp {
             status = .WaitToRetry
@@ -177,7 +188,8 @@ class GameScene: SKScene, DKCardTableDelegate {
     func allCardsMatched() {
         if status == .PlayingTime {
             status = .MatchAll
-            self.cardTable?.disableInteraction()
+            self.answerTable?.openCards()
+            self.playerTable?.disableInteraction()
         }
     }
 
