@@ -16,6 +16,9 @@ private let MATCH_ALL_DELAY_TIME = 0.8
 
 private let CARD_TABLE_HEIGHT:CGFloat = 200
 
+private let BUTTON_CHECK_WIDTH:CGFloat = 190
+private let BUTTON_CHECK_HEIGHT:CGFloat = 30
+
 enum GameStatus : String {
     case
     SceneStarted = "SceneStarted",              // initial State
@@ -28,16 +31,14 @@ enum GameStatus : String {
     StartPlayerTurnDelay = "StartPlayerTurnDelay", // wait START_PLAYER_TURN_DELAY_TIME
     StartPlayerTurn = "StartPlayerTurn",        // action
     PlayingTime = "PlayingTime",                // delay until TIME UP
-    TimeIsUp = "TimeIsUp",                      // action with time over
-    WaitToRetry = "WaitToRetry",                // wait until Retry | STATE END |
     MatchAll = "MatchAll",                      // action with correct answer
     MatchAllDelay = "MatchAllDelay",            // wait MATCH_ALL_DELAY_TIME
     PrepareNextRound = "PrepareNextRound",      // action
     ShowResult = "ShowResult",                  // action
-    GameFinished = "GameFinished"
+    GameFinished = "GameFinished"               // wait to RETRY
 }
 
-class GameScene: SKScene, DKCardTableDelegate {
+class GameScene: SKScene {
     private var _status:GameStatus = .SceneStarted
     private var savedTime:CFTimeInterval = 0
 
@@ -48,6 +49,7 @@ class GameScene: SKScene, DKCardTableDelegate {
     private var answerTable:DKCardTable?
     private var playerTable:DKCardTable?
     private var barNode:DKTimeBar?
+    private var btnCheck:DKButton?
 
     private var labelScroe:SKLabelNode?
     private var labelLevel:SKLabelNode?
@@ -76,19 +78,25 @@ class GameScene: SKScene, DKCardTableDelegate {
         self.addChild(background)
 
         let tableSize = CGSizeMake(view.frame.width, CARD_TABLE_HEIGHT)
-        let tblAnswer = DKCardTable(size:tableSize, engine: self.engine)
-        tblAnswer.position = CGPointMake(CGRectGetMidX(view.frame), tableSize.height * 1.5)
-        let tblPlayer = DKCardTable(size:tableSize, engine: self.engine)
+        let tblAnswer = DKCardTable(size:tableSize)
+        tblAnswer.position = CGPointMake(CGRectGetMidX(view.frame), tableSize.height * 1.5 + BUTTON_CHECK_HEIGHT)
+        let tblPlayer = DKCardTable(size:tableSize)
         tblPlayer.position = CGPointMake(CGRectGetMidX(view.frame), tableSize.height / 2)
-        tblPlayer.delegate = self
         self.addChild(tblAnswer)
         self.addChild(tblPlayer)
 
         self.answerTable = tblAnswer
         self.playerTable = tblPlayer
 
+        let btn = DKButton(fontSize: DKFontSize.Middle, buttonSize: CGSizeMake(BUTTON_CHECK_WIDTH, BUTTON_CHECK_HEIGHT))
+        btn.text = "Check it"
+        btn.position = CGPointMake(CGRectGetMidX(view.frame), tableSize.height + BUTTON_CHECK_HEIGHT / 4)
+        btn.buttonDidToucheBlock = checkAnswer
+        self.addChild(btn)
+        self.btnCheck = btn
+
         let bar = DKTimeBar(width: self.frame.width)
-        bar.position = CGPointMake(0, self.frame.height - 60)
+        bar.position = CGPointMake(0, self.frame.height - 40)
         self.addChild(bar)
         self.barNode = bar
 
@@ -100,7 +108,7 @@ class GameScene: SKScene, DKCardTableDelegate {
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         if status == .WaitToStart {
             status = .ShowAnswer
-        } else if status == .WaitToRetry || status == .GameFinished {
+        } else if status == .GameFinished {
             let skView:SKView = self.view!
             let scene = GameScene(size: skView.bounds.size)
             scene.scaleMode = .AspectFill
@@ -161,13 +169,8 @@ class GameScene: SKScene, DKCardTableDelegate {
             let maxTime = self.engine.playTimeMax
             self.barNode?.update(maxTime - diffTime, maxTime: maxTime)
             if diffTime >= maxTime {
-                // TODO Time Over
-                status = .TimeIsUp
-                self.answerTable?.openCards()
-                self.playerTable?.disableInteraction()
+                checkAnswer()
             }
-        } else if status == .TimeIsUp {
-            status = .WaitToRetry
         } else if status == .MatchAll {
             status = .MatchAllDelay
             savedTime = currentTime
@@ -187,11 +190,14 @@ class GameScene: SKScene, DKCardTableDelegate {
         }
     }
 
-    func allCardsMatched() {
-        if status == .PlayingTime {
+    func checkAnswer() {
+        let cards = self.playerTable?.cardViews.map({ $0.cardInfo })
+        self.answerTable?.openCards()
+        self.playerTable?.disableInteraction()
+        if self.engine.checkRoundFinish(cards!) {
             status = .MatchAll
-            self.answerTable?.openCards()
-            self.playerTable?.disableInteraction()
+        } else {
+            status = .ShowResult
         }
     }
 
@@ -210,17 +216,17 @@ class GameScene: SKScene, DKCardTableDelegate {
         self.addChild(lbMatchAll)
         self.labelMatchAll = lbMatchAll
 
-        let viewTopTextY:CGFloat = 30
+        let viewTopTextY:CGFloat = 22
         let marginHorizontal:CGFloat = 10
 
-        let lbScore = DKUtils.createLabel()
+        let lbScore = DKUtils.createLabel(fontSize: DKFontSize.Small)
         lbScore.text = "00"
         lbScore.position = CGPointMake(self.frame.width - marginHorizontal, self.frame.height - viewTopTextY)
         lbScore.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Right
         self.addChild(lbScore)
         self.labelScroe = lbScore
 
-        let lbLevel = DKUtils.createLabel()
+        let lbLevel = DKUtils.createLabel(fontSize: DKFontSize.Small)
         lbLevel.text = "Lv 1"
         lbLevel.position = CGPointMake(marginHorizontal, self.frame.height - viewTopTextY)
         lbLevel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left

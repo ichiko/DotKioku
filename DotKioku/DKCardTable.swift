@@ -23,19 +23,12 @@ private let COVER_FADE_DURATION:CFTimeInterval = 0.5
 private let COVER_MOVE_DURATION:CFTimeInterval = 0.7
 private let COVER_ACTION_DELAY:CFTimeInterval = 0.1
 
-protocol DKCardTableDelegate {
-    func allCardsMatched()
-}
-
 class DKCardTable : SKNode {
-    private var engine:GameEngine?
-    private var cardViews:[DKCard]
+    var cardViews:[DKCard]
     private var coverViews:[SKSpriteNode]
     private var selectedIndex:Int?
-    var delegate:DKCardTableDelegate?
 
-    init(size:CGSize, engine:GameEngine) {
-        self.engine = engine
+    init(size:CGSize) {
         self.cardViews = [DKCard]()
         self.coverViews = [SKSpriteNode]()
 
@@ -67,13 +60,6 @@ class DKCardTable : SKNode {
                 if firstIndex != secondIndex {
                     self.cardViews[firstIndex] = second
                     self.cardViews[secondIndex] = first
-
-                    let cards = self.cardViews.map({ $0.cardInfo })
-                    if self.engine!.checkRoundFinish(cards) {
-                        if let target = self.delegate {
-                            target.allCardsMatched()
-                        }
-                    }
                 }
                 self.selectedIndex = nil
             } else {
