@@ -18,7 +18,9 @@ private let SHOW_RESULT_DELAY_TIME = 0.8
 private let CARD_TABLE_HEIGHT:CGFloat = 200
 
 private let BUTTON_CHECK_WIDTH:CGFloat = 190
-private let BUTTON_CHECK_HEIGHT:CGFloat = 30
+private let BUTTON_CHECK_HEIGHT:CGFloat = 40
+
+private let INFO_AREA_HEIGHT:CGFloat = 40
 
 enum GameStatus : String {
     case
@@ -80,10 +82,12 @@ class GameScene: SKScene {
         self.addChild(background)
 
         let tableSize = CGSizeMake(view.frame.width, CARD_TABLE_HEIGHT)
+        let tableAreaSize = (view.frame.height - INFO_AREA_HEIGHT - BUTTON_CHECK_HEIGHT) / 2
+
         let tblAnswer = DKCardTable(size:tableSize)
-        tblAnswer.position = CGPointMake(CGRectGetMidX(view.frame), tableSize.height * 1.5 + BUTTON_CHECK_HEIGHT)
+        tblAnswer.position = CGPointMake(CGRectGetMidX(view.frame), tableAreaSize * 1.5 + BUTTON_CHECK_HEIGHT)
         let tblPlayer = DKCardTable(size:tableSize)
-        tblPlayer.position = CGPointMake(CGRectGetMidX(view.frame), tableSize.height / 2)
+        tblPlayer.position = CGPointMake(CGRectGetMidX(view.frame), tableAreaSize / 2)
         self.addChild(tblAnswer)
         self.addChild(tblPlayer)
 
@@ -92,13 +96,13 @@ class GameScene: SKScene {
 
         let btn = DKButton(fontSize: DKFontSize.Middle, buttonSize: CGSizeMake(BUTTON_CHECK_WIDTH, BUTTON_CHECK_HEIGHT))
         btn.text = "Check it"
-        btn.position = CGPointMake(CGRectGetMidX(view.frame), tableSize.height + BUTTON_CHECK_HEIGHT / 4)
+        btn.position = CGPointMake(CGRectGetMidX(view.frame), (view.frame.height - INFO_AREA_HEIGHT) / 2)
         btn.buttonDidToucheBlock = checkAnswer
         self.addChild(btn)
         self.btnCheck = btn
 
         let bar = DKTimeBar(width: self.frame.width)
-        bar.position = CGPointMake(0, self.frame.height - 40)
+        bar.position = CGPointMake(0, self.frame.height - INFO_AREA_HEIGHT)
         self.addChild(bar)
         self.barNode = bar
 
