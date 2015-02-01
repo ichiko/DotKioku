@@ -9,7 +9,7 @@
 import SpriteKit
 
 let kDKCardWidth:CGFloat = 60
-let kDKCardHeight:CGFloat = 86
+let kDKCardHeight:CGFloat = 60
 
 class DKCard: SKNode {
     var cardInfo: Card
