@@ -27,7 +27,7 @@ class DKButton: SKNode {
     convenience init(iconTexture:SKTexture, buttonSize:CGSize? = nil) {
         self.init()
 
-        self.addPanel(buttonSize, withIcon: true)
+        self.addPanel(buttonSize)
 
         let icon = SKSpriteNode(texture: iconTexture)
         icon.xScale = 0.7
@@ -42,6 +42,7 @@ class DKButton: SKNode {
         self.addPanel(buttonSize)
 
         let label = DKUtils.createLabel(fontSize:fontSize)
+        label.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
         self.addChild(label)
         self.label = label
     }
@@ -87,10 +88,9 @@ class DKButton: SKNode {
         }
     }
 
-    func addPanel(buttonSize:CGSize?, withIcon:Bool = false) {
+    func addPanel(buttonSize:CGSize?) {
         if buttonSize != nil {
             var panel = SKSpriteNode(color: SKColor.grayColor(), size: buttonSize!)
-            panel.position = CGPointMake(0, withIcon ? 0 : buttonSize!.height * 0.3)
             self.addChild(panel)
             self.panel = panel
         }
