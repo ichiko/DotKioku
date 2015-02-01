@@ -180,12 +180,18 @@ class GameScene: SKScene {
                 status = .PrepareNextRound
             }
         } else if status == .PrepareNextRound {
-            // -> ??
-            status = .ReStart
-            self.level++
-            self.updateLevelInfo()
-            self.labelMatchAll?.hidden = true
+            if self.engine.hasNextRound() {
+                status = .ReStart
+                self.level++
+                self.updateLevelInfo()
+                self.labelMatchAll?.hidden = true
+            } else {
+                status = .ShowResult
+            }
         } else if status == .ShowResult {
+            let result = DKResultLayer(stageName: self.engine.currentStage!.name, score: self.engine.score)
+            result.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+            self.addChild(result)
             status = .GameFinished
         }
     }

@@ -19,6 +19,10 @@ class GameEngine {
         _score = 0
     }
 
+    var currentStage:StageInfo? {
+        get { return _currentStage }
+    }
+
     var currentRound:CardSet? {
         get { return _currentRound }
     }
