@@ -13,6 +13,7 @@ private let RESTART_DELAY_TIME = 0.4
 private let ANSWER_DURATION_TIME = 1.2
 private let START_PLAYER_TURN_DELAY_TIME = 0.3
 private let MATCH_ALL_DELAY_TIME = 0.8
+private let SHOW_RESULT_DELAY_TIME = 0.8
 
 private let CARD_TABLE_HEIGHT:CGFloat = 200
 
@@ -24,8 +25,8 @@ enum GameStatus : String {
     SceneStarted = "SceneStarted",              // initial State
     StartDelay = "StartDelay",                  // wait START_DELAY_TIME
     WaitToStart = "WaitToStart",                // wait until User Action
-    ReStart = "ReStart",                        // next round
-    ReStartDelay = "ReStartDelay",              // wait RESTART_DELAY_TIME
+    StartRound = "StartRound",                  // next round
+    StartRoundDelay = "StartRoundDelay",        // wait RESTART_DELAY_TIME
     ShowAnswer = "ShowAnswer",                  // action
     ShowAnswerDuration = "ShowAnswerDuration",  // wait ANSWER_DURATION_TIME
     StartPlayerTurnDelay = "StartPlayerTurnDelay", // wait START_PLAYER_TURN_DELAY_TIME
@@ -35,6 +36,7 @@ enum GameStatus : String {
     MatchAllDelay = "MatchAllDelay",            // wait MATCH_ALL_DELAY_TIME
     PrepareNextRound = "PrepareNextRound",      // action
     ShowResult = "ShowResult",                  // action
+    ShowResultDelay = "ShowResultDelay",        // wait SHOW_RESULT_DELAY_TIME
     GameFinished = "GameFinished"               // wait to RETRY
 }
 
@@ -107,7 +109,7 @@ class GameScene: SKScene {
 
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         if status == .WaitToStart {
-            status = .ShowAnswer
+            status = .StartRound
         } else if status == .GameFinished {
             let skView:SKView = self.view!
             let scene = GameScene(size: skView.bounds.size)
@@ -128,13 +130,13 @@ class GameScene: SKScene {
 
                 self.labelStart?.hidden = false
             }
-        } else if status == .ReStart {
-            status = .ReStartDelay
+        } else if status == .StartRound {
+            status = .StartRoundDelay
             savedTime = currentTime
             self.answerTable?.removeCards()
             self.playerTable?.removeCards()
             self.barNode?.reset()
-        } else if status == .ReStartDelay {
+        } else if status == .StartRoundDelay {
             if diffTime >= RESTART_DELAY_TIME {
                 status = .ShowAnswer
             }
@@ -174,14 +176,13 @@ class GameScene: SKScene {
         } else if status == .MatchAll {
             status = .MatchAllDelay
             savedTime = currentTime
-            self.labelMatchAll?.hidden = false
         } else if status == .MatchAllDelay {
-            if diffTime >= MATCH_ALL_DELAY_TIME {
+            if !self.engine.hasNextRound() || diffTime >= MATCH_ALL_DELAY_TIME {
                 status = .PrepareNextRound
             }
         } else if status == .PrepareNextRound {
             if self.engine.hasNextRound() {
-                status = .ReStart
+                status = .StartRound
                 self.level++
                 self.updateLevelInfo()
                 self.labelMatchAll?.hidden = true
@@ -189,10 +190,15 @@ class GameScene: SKScene {
                 status = .ShowResult
             }
         } else if status == .ShowResult {
-            let result = DKResultLayer(stageName: self.engine.currentStage!.name, score: self.engine.score)
-            result.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
-            self.addChild(result)
-            status = .GameFinished
+            status = .ShowResultDelay
+            savedTime = currentTime
+        } else if status == .ShowResultDelay {
+            if diffTime >= SHOW_RESULT_DELAY_TIME {
+                let result = DKResultLayer(stageName: self.engine.currentStage!.name, score: self.engine.score)
+                result.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+                self.addChild(result)
+                status = .GameFinished
+            }
         }
     }
 
@@ -202,8 +208,10 @@ class GameScene: SKScene {
         self.playerTable?.disableInteraction()
         if self.engine.checkRoundFinish(cards!) {
             status = .MatchAll
+            self.labelMatchAll?.hidden = false
         } else {
             status = .ShowResult
+            self.addMatchNotAllLabel()
         }
     }
 
@@ -238,6 +246,14 @@ class GameScene: SKScene {
         lbLevel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
         self.addChild(lbLevel)
         self.labelLevel = lbLevel
+    }
+
+    private func addMatchNotAllLabel() {
+        let lbMatchNot = DKUtils.createLabel(fontSize: DKFontSize.XXLarge)
+        lbMatchNot.text = "x"
+        lbMatchNot.fontColor = SKColor.redColor()
+        lbMatchNot.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+        self.addChild(lbMatchNot)
     }
 
     private func updateLevelInfo() {
