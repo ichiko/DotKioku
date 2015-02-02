@@ -172,7 +172,7 @@ class GameScene: SKScene {
             self.engine.nextRound()
 
             let cards = self.engine.currentRound!.answer
-            self.cardTable?.displayCards(cards)
+            self.cardTable?.displayAnswerCards(cards)
         } else if status == .ShowAnswerDuration {
             self.labelCountDown?.text = NSString(format: "%d", Int(ANSWER_DURATION_TIME - diffTime) + 1)
             if diffTime >= ANSWER_DURATION_TIME {
@@ -194,8 +194,8 @@ class GameScene: SKScene {
             savedTime = currentTime
 
             let shuffled = self.engine.currentRound!.shuffle()
-            self.cardTable?.removeCards()
-            self.cardTable?.displayCards(shuffled)
+            self.cardTable?.hideAnswer()
+            self.cardTable?.displayPlayerCards(shuffled)
             self.cardTable?.discoverCards()
             self.cardTable?.enableInteraction()
             self.btnCheck?.hidden = false
@@ -249,14 +249,15 @@ class GameScene: SKScene {
 
     func checkAnswer() {
         self.btnCheck?.disabled = true
-        let cards = self.cardTable?.cardViews.map({ $0.cardInfo })
         self.cardTable?.disableInteraction()
+        let cards = self.cardTable?.playerViews.map({ $0.cardInfo })
         self.labelNotice?.hidden = true
         if self.engine.checkRoundFinish(cards!) {
             status = .MatchAll
             self.labelMatchAll?.hidden = false
         } else {
             status = .ShowResult
+            self.cardTable?.showResult()
             self.cardTable?.markCards(self.engine.results!)
         }
     }
