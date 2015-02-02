@@ -26,6 +26,7 @@ private let CARD_TABLE_HEIGHT:CGFloat = 320
 
 private let BUTTON_CHECK_WIDTH:CGFloat = 190
 private let BUTTON_CHECK_HEIGHT:CGFloat = 40
+private let BUTTON_CHECK_MARGIN_BOTTOM:CGFloat = 80
 
 private let INFO_AREA_HEIGHT:CGFloat = 40
 
@@ -102,8 +103,8 @@ class GameScene: SKScene {
         self.cardTable = table
 
         let btn = DKButton(fontSize: DKFontSize.Middle, buttonSize: CGSizeMake(BUTTON_CHECK_WIDTH, BUTTON_CHECK_HEIGHT))
-        btn.text = "Check it"
-        btn.position = CGPointMake(CGRectGetMidX(view.frame), self.AreaCenterY - tableSize.height / 2 - BUTTON_CHECK_HEIGHT / 2)
+        btn.text = "できた!"
+        btn.position = CGPointMake(CGRectGetMidX(view.frame), BUTTON_CHECK_MARGIN_BOTTOM)
         btn.buttonDidToucheBlock = checkAnswer
         btn.hidden = true
         self.addChild(btn)
