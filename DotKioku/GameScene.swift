@@ -50,6 +50,8 @@ class GameScene: SKScene {
 
     private var engine:GameEngine = GameEngine()
 
+    private var AreaCenterY:CGFloat = 0.0
+
     private var answerTable:DKCardTable?
     private var playerTable:DKCardTable?
     private var barNode:DKTimeBar?
@@ -58,7 +60,7 @@ class GameScene: SKScene {
     private var labelScroe:SKLabelNode?
     private var labelLevel:SKLabelNode?
 
-    private var labelStart:SKLabelNode?
+    private var labelReady:SKLabelNode?
     private var labelMatchAll:SKLabelNode?
 
     var status:GameStatus {
@@ -94,10 +96,12 @@ class GameScene: SKScene {
         self.answerTable = tblAnswer
         self.playerTable = tblPlayer
 
+        self.AreaCenterY = (view.frame.height - INFO_AREA_HEIGHT) / 2
         let btn = DKButton(fontSize: DKFontSize.Middle, buttonSize: CGSizeMake(BUTTON_CHECK_WIDTH, BUTTON_CHECK_HEIGHT))
         btn.text = "Check it"
-        btn.position = CGPointMake(CGRectGetMidX(view.frame), (view.frame.height - INFO_AREA_HEIGHT) / 2)
+        btn.position = CGPointMake(CGRectGetMidX(view.frame), self.AreaCenterY)
         btn.buttonDidToucheBlock = checkAnswer
+        btn.hidden = true
         self.addChild(btn)
         self.btnCheck = btn
 
@@ -132,7 +136,7 @@ class GameScene: SKScene {
             if diffTime >= START_DELAY_TIME {
                 status = .WaitToStart
 
-                self.labelStart?.hidden = false
+                self.labelReady?.hidden = false
             }
         } else if status == .StartRound {
             status = .StartRoundDelay
@@ -148,7 +152,7 @@ class GameScene: SKScene {
             status = .ShowAnswerDuration
             savedTime = currentTime
 
-            self.labelStart?.hidden = true
+            self.labelReady?.hidden = true
 
             self.engine.nextRound()
 
@@ -171,6 +175,8 @@ class GameScene: SKScene {
             let shuffled = self.engine.currentRound!.shuffle()
             self.playerTable?.displayCards(shuffled)
             self.playerTable?.enableInteraction()
+            self.btnCheck?.hidden = false
+            self.btnCheck?.disabled = false
         } else if status == .PlayingTime {
             let maxTime = self.engine.playTimeMax
             self.barNode?.update(maxTime - diffTime, maxTime: maxTime)
@@ -190,6 +196,7 @@ class GameScene: SKScene {
                 self.level++
                 self.updateLevelInfo()
                 self.labelMatchAll?.hidden = true
+                self.btnCheck?.hidden = true
             } else {
                 status = .ShowResult
             }
@@ -207,6 +214,7 @@ class GameScene: SKScene {
     }
 
     func checkAnswer() {
+        self.btnCheck?.disabled = true
         let cards = self.playerTable?.cardViews.map({ $0.cardInfo })
         self.answerTable?.openCards()
         self.playerTable?.disableInteraction()
@@ -221,14 +229,14 @@ class GameScene: SKScene {
 
     private func addLabel() {
         let lbStart = DKUtils.createLabel()
-        lbStart.text = "Start"
-        lbStart.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+        lbStart.text = "Ready?"
+        lbStart.position = CGPointMake(CGRectGetMidX(self.frame), self.AreaCenterY)
         lbStart.hidden = true
         self.addChild(lbStart)
-        self.labelStart = lbStart
+        self.labelReady = lbStart
 
         let lbMatchAll = DKUtils.createLabel(fontSize: DKFontSize.XXLarge)
-        lbMatchAll.text = "o"
+        lbMatchAll.text = "◯"
         lbMatchAll.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
         lbMatchAll.hidden = true
         self.addChild(lbMatchAll)
