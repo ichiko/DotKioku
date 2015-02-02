@@ -20,15 +20,20 @@ private let COVER_POSITION_DIFF_Y:CGFloat = 10
 private let CARD_FADE_OUT_DURATION:CFTimeInterval = 0.5
 
 private let COVER_FADE_DURATION:CFTimeInterval = 0.5
-private let COVER_MOVE_DURATION:CFTimeInterval = 0.7
-private let COVER_ACTION_DELAY:CFTimeInterval = 0.1
+private let COVER_ROTATE_DURATION:CFTimeInterval = 0.7
 
 class DKCardTable : SKNode {
+    private var cardLayer:SKNode
+    private var coverLayer:SKNode
+
     var cardViews:[DKCard]
     private var coverViews:[SKSpriteNode]
+
     private var selectedIndex:Int?
 
     init(size:CGSize) {
+        self.cardLayer = SKNode()
+        self.coverLayer = SKNode()
         self.cardViews = [DKCard]()
         self.coverViews = [SKSpriteNode]()
 
@@ -37,6 +42,9 @@ class DKCardTable : SKNode {
         let node = SKSpriteNode(color: SKColor(white: 1.0, alpha: 1.0), size: size)
         self.addChild(node)
         node.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+
+        self.addChild(self.cardLayer)
+        self.addChild(self.coverLayer)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -92,6 +100,13 @@ class DKCardTable : SKNode {
             card.removeFromParent()
         }
         self.cardViews.removeAll()
+    }
+
+    func removeAll() {
+        for card in self.cardViews {
+            card.removeFromParent()
+        }
+        self.cardViews.removeAll()
         for cover in self.coverViews {
             cover.removeFromParent()
         }
@@ -99,52 +114,32 @@ class DKCardTable : SKNode {
     }
 
     func coverCards() {
-        coverCards(true)
-    }
-
-    func coverCards(sequence:Bool) {
         let len = self.cardViews.count
         for var i = 0; i < len; i++ {
             let card = self.cardViews[i]
 
             let cover = SKSpriteNode(color: SKColor.brownColor(), size: CGSizeMake(kDKCardWidth, kDKCardHeight))
             let location = card.position
-            cover.position = CGPointMake(location.x + COVER_POSITION_DIFF_X, location.y + COVER_POSITION_DIFF_Y)
-            cover.hidden = true
-            self.addChild(cover)
+            cover.position = CGPointMake(location.x - kDKCardHeight / 2, location.y + kDKCardHeight / 2)
+            cover.anchorPoint = CGPointMake(0, 0)
+            cover.alpha = 0.0
+            self.coverLayer.addChild(cover)
             self.coverViews.append(cover)
 
-            let unhide = SKAction.unhide()
             let fadeIn = SKAction.fadeInWithDuration(COVER_FADE_DURATION)
-            let moveTo = SKAction.moveTo(location, duration: COVER_MOVE_DURATION)
-            var action:SKAction
-            if !sequence {
-                action = SKAction.group([unhide, fadeIn, moveTo])
-            } else {
-                let delay = SKAction.waitForDuration(CFTimeInterval(len - i) * COVER_ACTION_DELAY)
-                action = SKAction.sequence([delay, SKAction.group([unhide, fadeIn, moveTo])])
-            }
+            let rotate = SKAction.rotateByAngle(CGFloat(-M_PI_2), duration: COVER_ROTATE_DURATION)
+            let action = SKAction.group([fadeIn, rotate])
             cover.runAction(action)
         }
     }
 
-    func openCards() {
-        openCards(true)
-    }
-
-    func openCards(sequence:Bool) {
+    func discoverCards() {
         let len = self.coverViews.count
         for var i = 0; i < len; i++ {
             let cover = self.coverViews[i]
             let fadeOut = SKAction.fadeOutWithDuration(COVER_FADE_DURATION)
-            let moveBy = SKAction.moveBy(CGVectorMake(COVER_POSITION_DIFF_X, COVER_POSITION_DIFF_Y), duration: COVER_MOVE_DURATION)
-            var action:SKAction
-            if !sequence {
-                action = SKAction.group([fadeOut, moveBy])
-            } else {
-                let delay = SKAction.waitForDuration(CFTimeInterval(len - i) * COVER_ACTION_DELAY)
-                action = SKAction.group([delay, fadeOut, moveBy])
-            }
+            let rotate = SKAction.rotateByAngle(CGFloat(-M_PI_2), duration: COVER_ROTATE_DURATION)
+            let action = SKAction.group([fadeOut, rotate])
             cover.runAction(action)
         }
     }
@@ -177,7 +172,7 @@ class DKCardTable : SKNode {
             card.position = CGPointMake(
                 left + (CGFloat(col) + 0.5) * kDKCardWidth + CGFloat(col) * CARD_MARGIN_HORIZONTAL,
                 bottom + (CGFloat(row) + 0.5) * kDKCardHeight + CGFloat(row) * CARD_MARGIN_VERTICAL)
-            self.addChild(card)
+            self.cardLayer.addChild(card)
             self.cardViews.append(card)
         }
     }

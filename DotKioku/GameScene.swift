@@ -10,12 +10,19 @@ import SpriteKit
 
 private let START_DELAY_TIME = 0.5
 private let RESTART_DELAY_TIME = 0.4
-private let ANSWER_DURATION_TIME = 1.2
-private let START_PLAYER_TURN_DELAY_TIME = 0.3
+private let ANSWER_DURATION_TIME = 2.0
+private let START_PLAYER_TURN_DELAY_TIME = 1.0
 private let MATCH_ALL_DELAY_TIME = 0.8
 private let SHOW_RESULT_DELAY_TIME = 0.8
 
-private let CARD_TABLE_HEIGHT:CGFloat = 200
+private let START_LABEL_FADEIN_DURATION = 0.4
+private let START_LABEL_SCALE_DURATION = 0.4
+private let START_LABEL_FREEZE_DURATION = 0.8
+private let START_LABEL_FADEOUT_DURATION = 0.9
+private let START_LABEL_MOVEUP_DURATION = 0.9
+private let START_LABEL_MOVEUP_DIFF:CGFloat = 30
+
+private let CARD_TABLE_HEIGHT:CGFloat = 360
 
 private let BUTTON_CHECK_WIDTH:CGFloat = 190
 private let BUTTON_CHECK_HEIGHT:CGFloat = 40
@@ -52,16 +59,19 @@ class GameScene: SKScene {
 
     private var AreaCenterY:CGFloat = 0.0
 
-    private var answerTable:DKCardTable?
-    private var playerTable:DKCardTable?
+    private var cardTable:DKCardTable?
     private var barNode:DKTimeBar?
     private var btnCheck:DKButton?
 
     private var labelScroe:SKLabelNode?
     private var labelLevel:SKLabelNode?
+    private var labelNotice:SKLabelNode?
 
     private var labelReady:SKLabelNode?
     private var labelMatchAll:SKLabelNode?
+
+    private var labelCountDown:SKLabelNode?
+    private var labelStart:SKLabelNode?
 
     var status:GameStatus {
         get {
@@ -83,23 +93,17 @@ class GameScene: SKScene {
         background.anchorPoint = CGPointMake(0, 0)
         self.addChild(background)
 
-        let tableSize = CGSizeMake(view.frame.width, CARD_TABLE_HEIGHT)
-        let tableAreaSize = (view.frame.height - INFO_AREA_HEIGHT - BUTTON_CHECK_HEIGHT) / 2
-
-        let tblAnswer = DKCardTable(size:tableSize)
-        tblAnswer.position = CGPointMake(CGRectGetMidX(view.frame), tableAreaSize * 1.5 + BUTTON_CHECK_HEIGHT)
-        let tblPlayer = DKCardTable(size:tableSize)
-        tblPlayer.position = CGPointMake(CGRectGetMidX(view.frame), tableAreaSize / 2)
-        self.addChild(tblAnswer)
-        self.addChild(tblPlayer)
-
-        self.answerTable = tblAnswer
-        self.playerTable = tblPlayer
-
         self.AreaCenterY = (view.frame.height - INFO_AREA_HEIGHT) / 2
+
+        let tableSize = CGSizeMake(view.frame.width, CARD_TABLE_HEIGHT)
+        let table = DKCardTable(size:tableSize)
+        table.position = CGPointMake(CGRectGetMidX(view.frame), self.AreaCenterY)
+        self.addChild(table)
+        self.cardTable = table
+
         let btn = DKButton(fontSize: DKFontSize.Middle, buttonSize: CGSizeMake(BUTTON_CHECK_WIDTH, BUTTON_CHECK_HEIGHT))
         btn.text = "Check it"
-        btn.position = CGPointMake(CGRectGetMidX(view.frame), self.AreaCenterY)
+        btn.position = CGPointMake(CGRectGetMidX(view.frame), self.AreaCenterY - tableSize.height / 2 - BUTTON_CHECK_HEIGHT / 2)
         btn.buttonDidToucheBlock = checkAnswer
         btn.hidden = true
         self.addChild(btn)
@@ -127,7 +131,7 @@ class GameScene: SKScene {
     }
 
     override func update(currentTime: CFTimeInterval) {
-        let diffTime = currentTime - savedTime
+        let diffTime:CFTimeInterval = currentTime - savedTime
 
         if status == .SceneStarted {
             status = .StartDelay
@@ -137,12 +141,14 @@ class GameScene: SKScene {
                 status = .WaitToStart
 
                 self.labelReady?.hidden = false
+                self.labelNotice?.hidden = false
+                self.labelCountDown?.hidden = true
+                self.labelNotice?.text = "タップ で かいし"
             }
         } else if status == .StartRound {
             status = .StartRoundDelay
             savedTime = currentTime
-            self.answerTable?.removeCards()
-            self.playerTable?.removeCards()
+            self.cardTable?.removeAll()
             self.barNode?.reset()
         } else if status == .StartRoundDelay {
             if diffTime >= RESTART_DELAY_TIME {
@@ -153,28 +159,49 @@ class GameScene: SKScene {
             savedTime = currentTime
 
             self.labelReady?.hidden = true
+            self.labelNotice?.hidden = true
+            self.labelCountDown?.hidden = false
+            self.labelCountDown?.text = NSString(format: "%d", ANSWER_DURATION_TIME)
 
             self.engine.nextRound()
 
             let cards = self.engine.currentRound!.answer
-            self.answerTable?.displayCards(cards)
+            self.cardTable?.displayCards(cards)
         } else if status == .ShowAnswerDuration {
+            self.labelCountDown?.text = NSString(format: "%d", Int(ANSWER_DURATION_TIME - diffTime) + 1)
             if diffTime >= ANSWER_DURATION_TIME {
-                self.answerTable?.coverCards()
+                self.cardTable?.coverCards()
                 status = .StartPlayerTurnDelay
                 savedTime = currentTime
+                self.labelCountDown?.hidden = true
             }
         } else if status == .StartPlayerTurnDelay {
             if diffTime >= START_PLAYER_TURN_DELAY_TIME {
                 status = .StartPlayerTurn
+                if let label = self.labelStart {
+                    label.hidden = false
+                    label.alpha = 0.0
+                    label.xScale = 4.0
+                    label.yScale = 4.0
+                    let fadeIn = SKAction.fadeInWithDuration(START_LABEL_FADEIN_DURATION)
+                    let scale = SKAction.scaleTo(1.0, duration: START_LABEL_SCALE_DURATION)
+                    let delay = SKAction.waitForDuration(START_LABEL_FREEZE_DURATION)
+                    let fadeOut = SKAction.fadeOutWithDuration(START_LABEL_FADEOUT_DURATION)
+                    let moveUp = SKAction.moveToY(label.position.y + START_LABEL_MOVEUP_DIFF, duration: START_LABEL_MOVEUP_DURATION)
+                    let action = SKAction.sequence([SKAction.group([fadeIn, scale]), delay,
+                        SKAction.group([fadeOut, moveUp])])
+                    label.runAction(action)
+                }
             }
         } else if status == .StartPlayerTurn {
             status = .PlayingTime
             savedTime = currentTime
 
             let shuffled = self.engine.currentRound!.shuffle()
-            self.playerTable?.displayCards(shuffled)
-            self.playerTable?.enableInteraction()
+            self.cardTable?.removeCards()
+            self.cardTable?.displayCards(shuffled)
+            self.cardTable?.discoverCards()
+            self.cardTable?.enableInteraction()
             self.btnCheck?.hidden = false
             self.btnCheck?.disabled = false
         } else if status == .PlayingTime {
@@ -197,6 +224,11 @@ class GameScene: SKScene {
                 self.updateLevelInfo()
                 self.labelMatchAll?.hidden = true
                 self.btnCheck?.hidden = true
+                if let label = self.labelStart {
+                    label.hidden = true
+                    let position = label.position
+                    label.position = CGPointMake(position.x, position.y - START_LABEL_MOVEUP_DIFF)
+                }
             } else {
                 status = .ShowResult
             }
@@ -215,9 +247,8 @@ class GameScene: SKScene {
 
     func checkAnswer() {
         self.btnCheck?.disabled = true
-        let cards = self.playerTable?.cardViews.map({ $0.cardInfo })
-        self.answerTable?.openCards()
-        self.playerTable?.disableInteraction()
+        let cards = self.cardTable?.cardViews.map({ $0.cardInfo })
+        self.cardTable?.disableInteraction()
         if self.engine.checkRoundFinish(cards!) {
             status = .MatchAll
             self.labelMatchAll?.hidden = false
@@ -228,12 +259,12 @@ class GameScene: SKScene {
     }
 
     private func addLabel() {
-        let lbStart = DKUtils.createLabel()
-        lbStart.text = "Ready?"
-        lbStart.position = CGPointMake(CGRectGetMidX(self.frame), self.AreaCenterY)
-        lbStart.hidden = true
-        self.addChild(lbStart)
-        self.labelReady = lbStart
+        let lbReady = DKUtils.createLabel(fontSize: DKFontSize.Large)
+        lbReady.text = "Ready?"
+        lbReady.position = CGPointMake(CGRectGetMidX(self.frame), self.AreaCenterY)
+        lbReady.hidden = true
+        self.addChild(lbReady)
+        self.labelReady = lbReady
 
         let lbMatchAll = DKUtils.createLabel(fontSize: DKFontSize.XXLarge)
         lbMatchAll.text = "◯"
@@ -241,6 +272,21 @@ class GameScene: SKScene {
         lbMatchAll.hidden = true
         self.addChild(lbMatchAll)
         self.labelMatchAll = lbMatchAll
+
+        let tableTopTextY:CGFloat = self.AreaCenterY + CARD_TABLE_HEIGHT / 2 - 20
+
+        let lbCount = DKUtils.createLabel(fontSize: DKFontSize.Large)
+        lbCount.position = CGPointMake(CGRectGetMidX(self.frame), tableTopTextY)
+        lbCount.hidden = true
+        self.addChild(lbCount)
+        self.labelCountDown = lbCount
+
+        let lbStart = DKUtils.createLabel(fontSize: DKFontSize.Large)
+        lbStart.text = "START!"
+        lbStart.position = CGPointMake(CGRectGetMidX(self.frame), tableTopTextY)
+        lbStart.hidden = true
+        self.addChild(lbStart)
+        self.labelStart = lbStart
 
         let viewTopTextY:CGFloat = 22
         let marginHorizontal:CGFloat = 10
@@ -258,6 +304,13 @@ class GameScene: SKScene {
         lbLevel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
         self.addChild(lbLevel)
         self.labelLevel = lbLevel
+
+        let noticeTextY:CGFloat = 80
+
+        let lbNotice = DKUtils.createLabel(fontSize: DKFontSize.Small)
+        lbNotice.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.height - noticeTextY)
+        self.addChild(lbNotice)
+        self.labelNotice = lbNotice
     }
 
     private func addMatchNotAllLabel() {
