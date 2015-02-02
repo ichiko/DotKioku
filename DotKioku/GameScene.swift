@@ -22,7 +22,7 @@ private let START_LABEL_FADEOUT_DURATION = 0.9
 private let START_LABEL_MOVEUP_DURATION = 0.9
 private let START_LABEL_MOVEUP_DIFF:CGFloat = 30
 
-private let CARD_TABLE_HEIGHT:CGFloat = 360
+private let CARD_TABLE_HEIGHT:CGFloat = 320
 
 private let BUTTON_CHECK_WIDTH:CGFloat = 190
 private let BUTTON_CHECK_HEIGHT:CGFloat = 40
@@ -142,14 +142,15 @@ class GameScene: SKScene {
 
                 self.labelReady?.hidden = false
                 self.labelNotice?.hidden = false
-                self.labelCountDown?.hidden = true
                 self.labelNotice?.text = "タップ で かいし"
+                self.labelCountDown?.hidden = true
             }
         } else if status == .StartRound {
             status = .StartRoundDelay
             savedTime = currentTime
             self.cardTable?.removeAll()
             self.barNode?.reset()
+            self.labelNotice?.hidden = true
         } else if status == .StartRoundDelay {
             if diffTime >= RESTART_DELAY_TIME {
                 status = .ShowAnswer
@@ -159,7 +160,8 @@ class GameScene: SKScene {
             savedTime = currentTime
 
             self.labelReady?.hidden = true
-            self.labelNotice?.hidden = true
+            self.labelNotice?.hidden = false
+            self.labelNotice?.text = "はいちを おぼえて"
             self.labelCountDown?.hidden = false
             self.labelCountDown?.text = NSString(format: "%d", ANSWER_DURATION_TIME)
 
@@ -173,6 +175,7 @@ class GameScene: SKScene {
                 self.cardTable?.coverCards()
                 status = .StartPlayerTurnDelay
                 savedTime = currentTime
+                self.labelNotice?.hidden = true
                 self.labelCountDown?.hidden = true
             }
         } else if status == .StartPlayerTurnDelay {
@@ -192,6 +195,8 @@ class GameScene: SKScene {
                         SKAction.group([fadeOut, moveUp])])
                     label.runAction(action)
                 }
+                self.labelNotice?.hidden = false
+                self.labelNotice?.text = "いれかえて もとに もどして"
             }
         } else if status == .StartPlayerTurn {
             status = .PlayingTime
@@ -249,6 +254,7 @@ class GameScene: SKScene {
         self.btnCheck?.disabled = true
         let cards = self.cardTable?.cardViews.map({ $0.cardInfo })
         self.cardTable?.disableInteraction()
+        self.labelNotice?.hidden = true
         if self.engine.checkRoundFinish(cards!) {
             status = .MatchAll
             self.labelMatchAll?.hidden = false
@@ -308,6 +314,7 @@ class GameScene: SKScene {
         let noticeTextY:CGFloat = 80
 
         let lbNotice = DKUtils.createLabel(fontSize: DKFontSize.Small)
+        lbNotice.fontColor = SKColor.grayColor()
         lbNotice.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.height - noticeTextY)
         self.addChild(lbNotice)
         self.labelNotice = lbNotice
