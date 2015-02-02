@@ -13,6 +13,7 @@ class GameEngine {
     private var _currentRound:CardSet?
     private var _playTimeMax:CFTimeInterval
     private var _score:Int
+    private var _results:[Bool]?
 
     init() {
         _playTimeMax = 0
@@ -35,6 +36,10 @@ class GameEngine {
         get { return _score }
     }
 
+    var results:[Bool]? {
+        get { return _results }
+    }
+
     func newGame(stageId:Int) {
         _currentStage = StageInfo.load()
     }
@@ -51,10 +56,10 @@ class GameEngine {
         }
     }
 
-    // ラウンド終了の場、true
+    // ラウンド終了の場合、true
     func checkRoundFinish(cards:[Card]) -> Bool {
-        let result = self.currentRound?.check(cards)
-        if result?.filter({ !$0 }).count > 0 {
+        _results = self.currentRound?.check(cards)
+        if _results?.filter({ !$0 }).count > 0 {
             return false
         }
         return true

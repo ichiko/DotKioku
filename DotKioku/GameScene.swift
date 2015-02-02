@@ -14,7 +14,7 @@ private let ANSWER_DURATION_TIME = 2.0
 private let START_PLAYER_TURN_DELAY_TIME = 1.0
 private let MATCH_ALL_DELAY_TIME = 0.8
 private let PREPARE_NEXT_ROUND_DELAY_TIME = 1.0
-private let SHOW_RESULT_DELAY_TIME = 0.8
+private let SHOW_RESULT_DELAY_TIME = 1.2
 
 private let START_LABEL_FADEIN_DURATION = 0.4
 private let START_LABEL_SCALE_DURATION = 0.4
@@ -257,7 +257,7 @@ class GameScene: SKScene {
             self.labelMatchAll?.hidden = false
         } else {
             status = .ShowResult
-            self.addMatchNotAllLabel()
+            self.cardTable?.markCards(self.engine.results!)
         }
     }
 
@@ -337,14 +337,6 @@ class GameScene: SKScene {
         lbNotice.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.height - noticeTextY)
         self.addChild(lbNotice)
         self.labelNotice = lbNotice
-    }
-
-    private func addMatchNotAllLabel() {
-        let lbMatchNot = DKUtils.createLabel(fontSize: DKFontSize.XXLarge)
-        lbMatchNot.text = "x"
-        lbMatchNot.fontColor = SKColor.redColor()
-        lbMatchNot.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
-        self.addChild(lbMatchNot)
     }
 
     private func updateLevelInfo() {

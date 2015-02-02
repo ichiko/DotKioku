@@ -8,8 +8,8 @@
 
 import SpriteKit
 
-private let CARD_MARGIN_VERTICAL:CGFloat = 10
-private let CARD_MARGIN_HORIZONTAL:CGFloat = 10
+private let CARD_MARGIN_VERTICAL:CGFloat = 14
+private let CARD_MARGIN_HORIZONTAL:CGFloat = 14
 
 private let CARD_SELECTED_DIFF_X:CGFloat = -5
 private let CARD_SELECTED_DIFF_Y:CGFloat = 5
@@ -144,13 +144,18 @@ class DKCardTable : SKNode {
         }
     }
 
-    func fadeOutCards() {
-        for card in self.cardViews {
-            let fadeOut = SKAction.fadeOutWithDuration(CARD_FADE_OUT_DURATION)
-            let remove = SKAction.runBlock({ () -> Void in
-                card.removeFromParent()
-            })
-            card.runAction(SKAction.sequence([fadeOut, remove]))
+    func markCards(results:[Bool]) {
+        for var i = 0; i < self.cardViews.count; i++ {
+            let card = self.cardViews[i]
+            let match = results[i]
+            if !match {
+                let label = DKUtils.createLabel(fontSize: DKFontSize.Middle)
+                label.text = "x"
+                label.fontColor = SKColor.redColor()
+                let location = card.position
+                label.position = CGPointMake(location.x + kDKCardWidth / 2 - 5, location.y + kDKCardHeight / 2)
+                self.cardLayer.addChild(label)
+            }
         }
     }
 
