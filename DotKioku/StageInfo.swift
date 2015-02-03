@@ -35,13 +35,17 @@ class StageInfo {
         // FIXME its test
         let info = StageInfo(id: "test01", name: "some")
         var round = RoundInfo(no: 1)
-        round.addCardInfo(0, num: 2)
-        round.addCardInfo(1, num: 2)
+        round.addCardInfo(0, num: 5)
+        round.addCardInfo(1, num: 3)
         info.addRound(round)
         round = RoundInfo(no: 2)
-        round.addCardInfo(0, num: 1)
-        round.addCardInfo(1, num: 2)
-        round.addCardInfo(2, num: 1)
+        round.addCardInfo(0, num: 4)
+        round.addCardInfo(2, num: 4)
+        info.addRound(round)
+        round = RoundInfo(no: 3)
+        round.addCardInfo(0, num: 2)
+        round.addCardInfo(1, num: 4)
+        round.addCardInfo(2, num: 2)
         info.addRound(round)
 
         return info
