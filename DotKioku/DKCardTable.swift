@@ -23,22 +23,22 @@ private let COVER_FADE_DURATION:CFTimeInterval = 0.5
 private let COVER_ROTATE_DURATION:CFTimeInterval = 0.7
 
 class DKCardTable : SKNode {
-    private var answerLayer:SKNode
-    private var playLayer:SKNode
+    private var boxLayer:SKNode
+    private var cardLayer:SKNode
     private var coverLayer:SKNode
 
-    var answerViews:[DKCard]
-    var playerViews:[DKCard]
+    private var cardBoxes:[SKNode]
+    private var cardViews:[DKCard]
     private var coverViews:[SKSpriteNode]
 
     private var selectedIndex:Int?
 
     init(size:CGSize) {
-        self.answerLayer = SKNode()
-        self.playLayer = SKNode()
+        self.boxLayer = SKNode()
+        self.cardLayer = SKNode()
         self.coverLayer = SKNode()
-        self.answerViews = [DKCard]()
-        self.playerViews = [DKCard]()
+        self.cardBoxes = [DKCard]()
+        self.cardViews = [DKCard]()
         self.coverViews = [SKSpriteNode]()
 
         super.init()
@@ -47,8 +47,8 @@ class DKCardTable : SKNode {
         self.addChild(node)
         node.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
 
-        self.addChild(self.answerLayer)
-        self.addChild(self.playLayer)
+        self.addChild(self.boxLayer)
+        self.addChild(self.cardLayer)
         self.addChild(self.coverLayer)
     }
 
@@ -56,28 +56,34 @@ class DKCardTable : SKNode {
         fatalError("init(coder:) has not been implemented")
     }
 
+    var cardInfos:[Card] {
+        get {
+            return self.cardViews.map({ $0.cardInfo })
+        }
+    }
+
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        let touchedCard = self.playerViews.filter { (card) -> Bool in
+        let touchedCard = self.cardViews.filter { (card) -> Bool in
             card.containsPoint(touches.allObjects[0].locationInNode(self))
         }
         if touchedCard.count > 0 {
             if let firstIndex = self.selectedIndex {
-                let first = self.playerViews[firstIndex]
+                let first = self.cardViews[firstIndex]
                 let second = touchedCard[0]
-                let secondIndex = find(self.playerViews, second)!
+                let secondIndex = find(self.cardViews, second)!
 
                 let location = first.position
                 first.position = second.position
                 second.position = CGPointMake(location.x - CARD_SELECTED_DIFF_X, location.y - CARD_SELECTED_DIFF_Y)
 
                 if firstIndex != secondIndex {
-                    self.playerViews[firstIndex] = second
-                    self.playerViews[secondIndex] = first
+                    self.cardViews[firstIndex] = second
+                    self.cardViews[secondIndex] = first
                 }
                 self.selectedIndex = nil
             } else {
                 let selected = touchedCard[0]
-                self.selectedIndex = find(self.playerViews, selected)
+                self.selectedIndex = find(self.cardViews, selected)
 
                 let location = selected.position
                 selected.position = CGPointMake(location.x + CARD_SELECTED_DIFF_X, location.y + CARD_SELECTED_DIFF_Y)
@@ -97,33 +103,18 @@ class DKCardTable : SKNode {
     }
 
     func displayAnswerCards(cards:[Card]) {
-        self.answerLayer.hidden = false
-        displayCards(self.answerLayer, views: &self.answerViews, cards: cards, cols: 4)
+        displayCards(cards, cols: 4, appendBox: true)
     }
 
     func displayPlayerCards(cards:[Card]) {
-        displayCards(self.playLayer, views: &self.playerViews, cards: cards, cols: 4)
-    }
-
-    func hideAnswer() {
-        self.answerLayer.hidden = true
-    }
-
-    func showResult() {
-        self.answerLayer.hidden = false
-        self.answerLayer.alpha = 0.5
-        self.playLayer.alpha = 0.5
+        displayCards(cards, cols: 4, appendBox: false)
     }
 
     func removeAll() {
-        for card in self.answerViews {
+        for card in self.cardViews {
             card.removeFromParent()
         }
-        self.answerViews.removeAll()
-        for card in self.playerViews {
-            card.removeFromParent()
-        }
-        self.playerViews.removeAll()
+        self.cardViews.removeAll()
         for cover in self.coverViews {
             cover.removeFromParent()
         }
@@ -131,9 +122,9 @@ class DKCardTable : SKNode {
     }
 
     func coverCards() {
-        let len = self.answerViews.count
+        let len = self.cardViews.count
         for var i = 0; i < len; i++ {
-            let card = self.answerViews[i]
+            let card = self.cardViews[i]
 
             let cover = SKSpriteNode(color: SKColor.brownColor(), size: CGSizeMake(kDKCardWidth, kDKCardHeight))
             let location = card.position
@@ -162,8 +153,8 @@ class DKCardTable : SKNode {
     }
 
     func markCards(results:[Bool]) {
-        for var i = 0; i < self.playerViews.count; i++ {
-            let card = self.playerViews[i]
+        for var i = 0; i < self.cardViews.count; i++ {
+            let card = self.cardViews[i]
             let match = results[i]
             if !match {
                 let label = DKUtils.createLabel(fontSize: DKFontSize.Middle)
@@ -171,13 +162,13 @@ class DKCardTable : SKNode {
                 label.fontColor = SKColor.redColor()
                 let location = card.position
                 label.position = CGPointMake(location.x + kDKCardWidth / 2 - 5, location.y + kDKCardHeight / 2)
-                self.playLayer.addChild(label)
+                self.cardLayer.addChild(label)
             }
         }
     }
 
-    private func displayCards(layer:SKNode, inout views:[DKCard], cards:[Card], cols:Int) {
-        views.removeAll(keepCapacity: false)
+    private func displayCards(cards:[Card], cols:Int, appendBox:Bool) {
+        self.cardViews.removeAll(keepCapacity: false)
         let frame = self.frame
         let len = cards.count
         let rows = len / cols
@@ -194,8 +185,15 @@ class DKCardTable : SKNode {
             card.position = CGPointMake(
                 left + (CGFloat(col) + 0.5) * kDKCardWidth + CGFloat(col) * CARD_MARGIN_HORIZONTAL,
                 bottom + (CGFloat(row) + 0.5) * kDKCardHeight + CGFloat(row) * CARD_MARGIN_VERTICAL)
-            layer.addChild(card)
-            views.append(card)
+            self.cardLayer.addChild(card)
+            self.cardViews.append(card)
+
+            if appendBox {
+                let box = DKCard(cardInfo: Card(typeId: 0), color: SKColor.grayColor())
+                box.position = card.position
+                self.boxLayer.addChild(box)
+                self.cardBoxes.append(box)
+            }
         }
     }
 }

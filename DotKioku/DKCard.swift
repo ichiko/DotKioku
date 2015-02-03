@@ -15,12 +15,12 @@ class DKCard: SKNode {
     var cardInfo: Card
     var icon: SKSpriteNode?
 
-    init(cardInfo:Card) {
+    init(cardInfo:Card, color:SKColor) {
         self.cardInfo = cardInfo
 
         super.init()
 
-        let panel = SKSpriteNode(color: SKColor.whiteColor(), size: CGSizeMake(kDKCardWidth, kDKCardHeight))
+        let panel = SKSpriteNode(color: color, size: CGSizeMake(kDKCardWidth, kDKCardHeight))
         let path = UIBezierPath()
         path.moveToPoint(CGPointMake(0, 0))
         path.addLineToPoint(CGPointMake(0, kDKCardHeight))
@@ -36,6 +36,10 @@ class DKCard: SKNode {
         self.addChild(border)
 
         self.updateIcon()
+    }
+
+    convenience init(cardInfo:Card) {
+        self.init(cardInfo: cardInfo, color: SKColor.whiteColor())
     }
 
     deinit {

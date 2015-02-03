@@ -194,7 +194,6 @@ class GameScene: SKScene {
             savedTime = currentTime
 
             let shuffled = self.engine.currentRound!.shuffle()
-            self.cardTable?.hideAnswer()
             self.cardTable?.displayPlayerCards(shuffled)
             self.cardTable?.discoverCards()
             self.cardTable?.enableInteraction()
@@ -250,14 +249,13 @@ class GameScene: SKScene {
     func checkAnswer() {
         self.btnCheck?.disabled = true
         self.cardTable?.disableInteraction()
-        let cards = self.cardTable?.playerViews.map({ $0.cardInfo })
+        let cards = self.cardTable?.cardInfos
         self.labelNotice?.hidden = true
         if self.engine.checkRoundFinish(cards!) {
             status = .MatchAll
             self.labelMatchAll?.hidden = false
         } else {
             status = .ShowResult
-            self.cardTable?.showResult()
             self.cardTable?.markCards(self.engine.results!)
         }
     }
