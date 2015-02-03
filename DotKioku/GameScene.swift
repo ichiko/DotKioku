@@ -83,7 +83,7 @@ class GameScene: SKScene {
         }
         set (value) {
             _status = value
-            println(value.rawValue)
+//            println(value.rawValue)
         }
     }
 
@@ -239,6 +239,7 @@ class GameScene: SKScene {
         } else if status == .ShowResultDelay {
             if diffTime >= SHOW_RESULT_DELAY_TIME {
                 let result = DKResultLayer(stageName: self.engine.currentStage!.name, score: self.engine.score)
+                result.zPosition = 10
                 result.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
                 self.addChild(result)
                 status = .GameFinished

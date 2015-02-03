@@ -22,6 +22,12 @@ private let CARD_FADE_OUT_DURATION:CFTimeInterval = 0.5
 private let COVER_FADE_DURATION:CFTimeInterval = 0.5
 private let COVER_ROTATE_DURATION:CFTimeInterval = 0.7
 
+private let DRAG_MOVE_THRESHOLD_SQ:CGFloat = 10 * 10
+
+enum DragState:String {
+    case None = "None", Started = "Started", Moving = "Moving"
+}
+
 class DKCardTable : SKNode {
     private var boxLayer:SKNode
     private var cardLayer:SKNode
@@ -33,10 +39,25 @@ class DKCardTable : SKNode {
 
     private var selectedIndex:Int?
 
+    private var _dragState:DragState = .None
+    private var touchedPosition:CGPoint?
+    private var touchedCard:DKCard?
+
+    private var dragState:DragState {
+        get { return _dragState }
+        set (value) {
+            _dragState = value
+            println(value.rawValue)
+        }
+    }
+
     init(size:CGSize) {
         self.boxLayer = SKNode()
+        self.boxLayer.zPosition = 1
         self.cardLayer = SKNode()
+        self.cardLayer.zPosition = 2
         self.coverLayer = SKNode()
+        self.coverLayer.zPosition = 3
         self.cardBoxes = [DKCard]()
         self.cardViews = [DKCard]()
         self.coverViews = [SKSpriteNode]()
@@ -63,32 +84,53 @@ class DKCardTable : SKNode {
     }
 
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+        let position = touches.anyObject()!.locationInNode(self)
         let touchedCard = self.cardViews.filter { (card) -> Bool in
-            card.containsPoint(touches.allObjects[0].locationInNode(self))
+            card.containsPoint(position)
         }
-        if touchedCard.count > 0 {
-            if let firstIndex = self.selectedIndex {
-                let first = self.cardViews[firstIndex]
-                let second = touchedCard[0]
-                let secondIndex = find(self.cardViews, second)!
-
-                let location = first.position
-                first.position = second.position
-                second.position = CGPointMake(location.x - CARD_SELECTED_DIFF_X, location.y - CARD_SELECTED_DIFF_Y)
-
-                if firstIndex != secondIndex {
-                    self.cardViews[firstIndex] = second
-                    self.cardViews[secondIndex] = first
+        if touchedCard.count > 0 && self.dragState == .None {
+            println("touchesBegin")
+            self.dragState = .Started
+            self.touchedPosition = position
+            self.touchedCard = touchedCard[0]
+            for card in self.cardViews {
+                if card != self.touchedCard! {
+                    card.zPosition = 1
                 }
-                self.selectedIndex = nil
-            } else {
-                let selected = touchedCard[0]
-                self.selectedIndex = find(self.cardViews, selected)
+            }
+            self.touchedCard!.zPosition = 2
+        }
+    }
 
-                let location = selected.position
-                selected.position = CGPointMake(location.x + CARD_SELECTED_DIFF_X, location.y + CARD_SELECTED_DIFF_Y)
+    override func touchesMoved(touches: NSSet, withEvent event: UIEvent) {
+        if let card = self.touchedCard {
+            let position = touches.anyObject()!.locationInNode(self)
+            if self.dragState == .Started {
+                let distance = fabs(position.x - self.touchedPosition!.x) * fabs(position.y - self.touchedPosition!.y)
+                if distance >= DRAG_MOVE_THRESHOLD_SQ {
+                    self.dragState = .Moving
+                }
+            } else if self.dragState == .Moving {
+                let cardPos = card.position
+                card.position = CGPointMake(cardPos.x + (position.x - self.touchedPosition!.x),
+                    cardPos.y + (position.y - self.touchedPosition!.y))
+                self.touchedPosition = position
             }
         }
+    }
+
+    override func touchesCancelled(touches: NSSet!, withEvent event: UIEvent!) {
+        println("touchesCancelled")
+        self.dragState = .None
+        self.touchedPosition = nil
+        self.touchedCard = nil
+    }
+
+    override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
+        println("touchesEnded")
+        self.dragState = .None
+        self.touchedPosition = nil
+        self.touchedCard = nil
     }
 
     func enableInteraction() {
@@ -100,6 +142,7 @@ class DKCardTable : SKNode {
     func disableInteraction() {
         NSLog("disableInteraction")
         self.userInteractionEnabled = false
+        self.dragState = .None
     }
 
     func displayAnswerCards(cards:[Card]) {
@@ -168,6 +211,9 @@ class DKCardTable : SKNode {
     }
 
     private func displayCards(cards:[Card], cols:Int, appendBox:Bool) {
+        for card in self.cardViews {
+            card.removeFromParent()
+        }
         self.cardViews.removeAll(keepCapacity: false)
         let frame = self.frame
         let len = cards.count
@@ -185,6 +231,7 @@ class DKCardTable : SKNode {
             card.position = CGPointMake(
                 left + (CGFloat(col) + 0.5) * kDKCardWidth + CGFloat(col) * CARD_MARGIN_HORIZONTAL,
                 bottom + (CGFloat(row) + 0.5) * kDKCardHeight + CGFloat(row) * CARD_MARGIN_VERTICAL)
+            card.zPosition = 1
             self.cardLayer.addChild(card)
             self.cardViews.append(card)
 
