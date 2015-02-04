@@ -22,7 +22,7 @@ private let CARD_FADE_OUT_DURATION:CFTimeInterval = 0.5
 private let COVER_FADE_DURATION:CFTimeInterval = 0.5
 private let COVER_ROTATE_DURATION:CFTimeInterval = 0.7
 
-private let DRAG_MOVE_THRESHOLD_SQ:CGFloat = 10 * 10
+private let DRAG_MOVE_THRESHOLD_SQ:CGFloat = 5 * 5
 
 enum DragState:String {
     case None = "None", Started = "Started", Moving = "Moving"
@@ -33,7 +33,7 @@ class DKCardTable : SKNode {
     private var cardLayer:SKNode
     private var coverLayer:SKNode
 
-    private var cardBoxes:[SKNode]
+    private var cardBoxes:[DKBox]
     private var cardViews:[DKCard]
     private var coverViews:[SKSpriteNode]
 
@@ -58,7 +58,7 @@ class DKCardTable : SKNode {
         self.cardLayer.zPosition = 2
         self.coverLayer = SKNode()
         self.coverLayer.zPosition = 3
-        self.cardBoxes = [DKCard]()
+        self.cardBoxes = [DKBox]()
         self.cardViews = [DKCard]()
         self.coverViews = [SKSpriteNode]()
 
@@ -106,28 +106,43 @@ class DKCardTable : SKNode {
         if let card = self.touchedCard {
             let position = touches.anyObject()!.locationInNode(self)
             if self.dragState == .Started {
-                let distance = fabs(position.x - self.touchedPosition!.x) * fabs(position.y - self.touchedPosition!.y)
-                if distance >= DRAG_MOVE_THRESHOLD_SQ {
+                let distance = (position.x - self.touchedPosition!.x) * (position.y - self.touchedPosition!.y)
+                if fabs(distance) >= DRAG_MOVE_THRESHOLD_SQ {
                     self.dragState = .Moving
                 }
             } else if self.dragState == .Moving {
                 let cardPos = card.position
                 card.position = CGPointMake(cardPos.x + (position.x - self.touchedPosition!.x),
                     cardPos.y + (position.y - self.touchedPosition!.y))
+                if card.fixed {
+                    card.fixed = false
+                    for box in self.cardBoxes {
+                        if box.card == card {
+                            box.feedOut()
+                        }
+                    }
+                }
                 self.touchedPosition = position
             }
         }
     }
 
     override func touchesCancelled(touches: NSSet!, withEvent event: UIEvent!) {
-        println("touchesCancelled")
         self.dragState = .None
         self.touchedPosition = nil
         self.touchedCard = nil
     }
 
     override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
-        println("touchesEnded")
+        if let card = self.touchedCard {
+            for box in self.cardBoxes {
+                if box.feedIn(card) {
+                    card.position = box.position
+                    card.fixed = true
+                    break
+                }
+            }
+        }
         self.dragState = .None
         self.touchedPosition = nil
         self.touchedCard = nil
@@ -236,7 +251,7 @@ class DKCardTable : SKNode {
             self.cardViews.append(card)
 
             if appendBox {
-                let box = DKCard(cardInfo: Card(typeId: 0), color: SKColor.grayColor())
+                let box = DKBox()
                 box.position = card.position
                 self.boxLayer.addChild(box)
                 self.cardBoxes.append(box)

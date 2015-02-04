@@ -23,6 +23,7 @@
 		EC539ACC1A5FBFBB002A5E96 /* SE001_Fail.wav in Resources */ = {isa = PBXBuildFile; fileRef = EC539AC91A5FBFBB002A5E96 /* SE001_Fail.wav */; };
 		EC539ACD1A5FBFBB002A5E96 /* SE001_Rankup.wav in Resources */ = {isa = PBXBuildFile; fileRef = EC539ACA1A5FBFBB002A5E96 /* SE001_Rankup.wav */; };
 		EC539ACE1A5FBFBB002A5E96 /* SE002_paper.wav in Resources */ = {isa = PBXBuildFile; fileRef = EC539ACB1A5FBFBB002A5E96 /* SE002_paper.wav */; };
+		ECABB20F1A820BF700E01C2C /* DKBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECABB20E1A820BF700E01C2C /* DKBox.swift */; };
 		ECB12ED71A7B170F00976BBE /* DKTimeBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB12ED61A7B170F00976BBE /* DKTimeBar.swift */; };
 		ECB19B461A5F7405007470A2 /* DKUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB19B451A5F7405007470A2 /* DKUtils.swift */; };
 		ECB3358A1A5CB2CA00375F73 /* DKCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB335891A5CB2CA00375F73 /* DKCard.swift */; };
@@ -84,6 +85,7 @@
 		EC539AC91A5FBFBB002A5E96 /* SE001_Fail.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = SE001_Fail.wav; sourceTree = "<group>"; };
 		EC539ACA1A5FBFBB002A5E96 /* SE001_Rankup.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = SE001_Rankup.wav; sourceTree = "<group>"; };
 		EC539ACB1A5FBFBB002A5E96 /* SE002_paper.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = SE002_paper.wav; sourceTree = "<group>"; };
+		ECABB20E1A820BF700E01C2C /* DKBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DKBox.swift; sourceTree = "<group>"; };
 		ECB12ED61A7B170F00976BBE /* DKTimeBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DKTimeBar.swift; sourceTree = "<group>"; };
 		ECB19B451A5F7405007470A2 /* DKUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DKUtils.swift; sourceTree = "<group>"; };
 		ECB335891A5CB2CA00375F73 /* DKCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DKCard.swift; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 				ECB531161A5E6FD0002FA5C6 /* DKResultLayer.swift */,
 				EC0CC5C91A78B3FB00BD62B3 /* DKCardTable.swift */,
 				ECB12ED61A7B170F00976BBE /* DKTimeBar.swift */,
+				ECABB20E1A820BF700E01C2C /* DKBox.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -496,6 +499,7 @@
 				ECB12ED71A7B170F00976BBE /* DKTimeBar.swift in Sources */,
 				EC22E85B1A5BECE000EBED00 /* GameViewController.swift in Sources */,
 				ECB3358E1A5CC79500375F73 /* DKButton.swift in Sources */,
+				ECABB20F1A820BF700E01C2C /* DKBox.swift in Sources */,
 				EC22E8551A5BECE000EBED00 /* AppDelegate.swift in Sources */,
 				ECDCB3C91A6635EE00AC2F9E /* TitleScene.swift in Sources */,
 				EC539AC71A5FBD33002A5E96 /* AudioUtils.swift in Sources */,
